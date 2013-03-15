@@ -1,0 +1,1 @@
+C:\Users\bcuff\src\MemcachedSharp\src\Cuffsoft.Memcached\obj\Debug\Cuffsoft.Memcached.csprojResolveAssemblyReference.cache
