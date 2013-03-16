@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Cuffsoft.Memcached
+namespace MemcachedSharp
 {
     internal class MemcachedResponseReader
     {
@@ -52,6 +52,7 @@ namespace Cuffsoft.Memcached
                     if (_buffer[_pos] == '\r') continue;
                     if (_buffer[_pos] == '\n')
                     {
+                        ++_pos;
                         ms.Position = 0;
                         return _encoding.GetString(ms.ToArray());
                     }
@@ -62,13 +63,14 @@ namespace Cuffsoft.Memcached
             throw new EndOfStreamException("Unexpected end of stream");
         }
 
-        public async Task<MemoryStream> ReadBody(long length)
+        public async Task<MemoryStream> ReadBody(int length)
         {
-            var ms = new MemoryStream();
+            var ms = new MemoryStream(length);
             while (length > 0 && await EnsureBuffer())
             {
-                var count = (int)Math.Min(length, _length - _pos);
+                var count = Math.Min(length, _length - _pos);
                 await ms.WriteAsync(_buffer, _pos, count);
+                _pos += count;
                 length -= count;
             }
             ms.Position = 0;

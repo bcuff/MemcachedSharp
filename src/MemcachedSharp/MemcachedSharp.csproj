@@ -7,8 +7,8 @@
     <ProjectGuid>{761D5804-02C8-466C-978B-8209EA7BC788}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Cuffsoft.Memcached</RootNamespace>
-    <AssemblyName>Cuffsoft.Memcached</AssemblyName>
+    <RootNamespace>MemcachedSharp</RootNamespace>
+    <AssemblyName>MemcachedSharp</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -42,7 +42,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DateTimeExtensions.cs" />
     <Compile Include="MemcachedConnection.cs" />
+    <Compile Include="MemcachedException.cs" />
+    <Compile Include="MemcachedItem.cs" />
+    <Compile Include="MemcachedStorageOptions.cs" />
     <Compile Include="MemcachedResponseReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SocketExtensions.cs" />

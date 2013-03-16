@@ -1,7 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cuffsoft.Memcached", "Cuffsoft.Memcached.csproj", "{761D5804-02C8-466C-978B-8209EA7BC788}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemcachedSharp", "MemcachedSharp\MemcachedSharp.csproj", "{761D5804-02C8-466C-978B-8209EA7BC788}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{3C0B6389-A808-4651-87E6-AF4CB8C3FE5D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

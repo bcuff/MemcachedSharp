@@ -6,7 +6,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Cuffsoft.Memcached
+namespace MemcachedSharp
 {
     public static class SocketExtensions
     {
@@ -39,6 +39,18 @@ namespace Cuffsoft.Memcached
             if (buffer == null) throw new ArgumentNullException("buffer");
 
             return socket.SendAsync(buffer, 0, buffer.Length, flags);
+        }
+
+        public static Task<int> SendAsync(this Socket socket, IList<ArraySegment<byte>> buffers, SocketFlags flags = SocketFlags.None)
+        {
+            if (socket == null) throw new ArgumentNullException("socket");
+            if (buffers == null) throw new ArgumentNullException("buffers");
+
+            return Task<int>.Factory.FromAsync(
+                (ac, state) => socket.BeginSend(buffers, flags, ac, state),
+                socket.EndSend,
+                null,
+                TaskCreationOptions.None);
         }
 
         public static Task<int> ReceiveAsync(this Socket socket, byte[] buffer, int offset, int size, SocketFlags flags = SocketFlags.None)

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 
-namespace Cuffsoft.Memcached
+namespace MemcachedSharp
 {
     [Serializable]
     public sealed class MemcachedException : Exception
