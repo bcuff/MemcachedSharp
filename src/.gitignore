@@ -2,3 +2,4 @@
 *.suo
 *~
 _ReSharper.*
+*.user
