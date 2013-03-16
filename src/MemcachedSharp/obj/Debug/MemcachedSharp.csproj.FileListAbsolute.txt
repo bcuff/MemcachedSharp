@@ -1,4 +1,0 @@
-C:\Users\Brandon\src\MemcachedSharp\src\Cuffsoft.Memcached\bin\Debug\MemcachedSharp.dll
-C:\Users\Brandon\src\MemcachedSharp\src\Cuffsoft.Memcached\bin\Debug\MemcachedSharp.pdb
-C:\Users\Brandon\src\MemcachedSharp\src\Cuffsoft.Memcached\obj\Debug\MemcachedSharp.dll
-C:\Users\Brandon\src\MemcachedSharp\src\Cuffsoft.Memcached\obj\Debug\MemcachedSharp.pdb

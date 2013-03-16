@@ -1,6 +1,0 @@
-C:\Users\bcuff\src\MemcachedSharp\src\Cuffsoft.Memcached\obj\Debug\Cuffsoft.Memcached.csprojResolveAssemblyReference.cache
-C:\Users\Brandon\src\MemcachedSharp\src\Cuffsoft.Memcached\bin\Debug\Cuffsoft.Memcached.dll
-C:\Users\Brandon\src\MemcachedSharp\src\Cuffsoft.Memcached\bin\Debug\Cuffsoft.Memcached.pdb
-C:\Users\Brandon\src\MemcachedSharp\src\Cuffsoft.Memcached\obj\Debug\Cuffsoft.Memcached.csprojResolveAssemblyReference.cache
-C:\Users\Brandon\src\MemcachedSharp\src\Cuffsoft.Memcached\obj\Debug\Cuffsoft.Memcached.dll
-C:\Users\Brandon\src\MemcachedSharp\src\Cuffsoft.Memcached\obj\Debug\Cuffsoft.Memcached.pdb
