@@ -107,6 +107,11 @@ namespace MemcachedSharp
         {
             if (key == null) throw new ArgumentNullException("key");
             if (key.Length > 250) throw new ArgumentException("key must be no more than 250 characters in length", "key");
+            for (int i = 0; i < key.Length; ++i)
+            {
+                if (char.IsWhiteSpace(key[i])) throw new ArgumentException("key may not contain whitespace at position=" + i + " key=" + key, "key");
+                if (char.IsControl(key[i])) throw new ArgumentException("key may not contain control characters at position=" + i + " key=" + key, "key");
+            }
         }
 
         private void EnsureOpen()
