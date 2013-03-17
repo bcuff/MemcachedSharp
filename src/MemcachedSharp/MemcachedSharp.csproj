@@ -42,12 +42,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AsyncSemaphore.cs" />
     <Compile Include="DateTimeExtensions.cs" />
+    <Compile Include="IPooledItem.cs" />
     <Compile Include="MemcachedConnection.cs" />
     <Compile Include="MemcachedException.cs" />
     <Compile Include="MemcachedItem.cs" />
     <Compile Include="MemcachedStorageOptions.cs" />
     <Compile Include="MemcachedResponseReader.cs" />
+    <Compile Include="Pool.cs" />
+    <Compile Include="PoolOptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResponseLine.cs" />
     <Compile Include="SocketExtensions.cs" />
