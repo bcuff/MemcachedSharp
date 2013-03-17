@@ -49,6 +49,7 @@
     <Compile Include="MemcachedStorageOptions.cs" />
     <Compile Include="MemcachedResponseReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ResponseLine.cs" />
     <Compile Include="SocketExtensions.cs" />
     <Compile Include="StringExtensions.cs" />
   </ItemGroup>

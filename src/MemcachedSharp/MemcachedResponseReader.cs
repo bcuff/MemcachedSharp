@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -24,7 +23,7 @@ namespace MemcachedSharp
             _buffer = new byte[4 << 10];
         }
 
-        private async Task<bool> EnsureBuffer()
+        private async Task<bool> EnsureBuffer(bool throwOnEndOfStream)
         {
             if (_pos == _length)
             {
@@ -35,6 +34,7 @@ namespace MemcachedSharp
                     TaskCreationOptions.None);
                 if (_length == 0)
                 {
+                    if (throwOnEndOfStream) throw new MemcachedException("Unexpected end of stream");
                     return false;
                 }
                 _pos = 0;
@@ -42,11 +42,12 @@ namespace MemcachedSharp
             return true;
         }
 
-        public async Task<string> ReadLine()
+        public async Task<ResponseLine> ReadLine(bool validate = true)
         {
             var ms = new MemoryStream();
-            while (await EnsureBuffer())
+            while (true)
             {
+                if (_pos == _length) await EnsureBuffer(true);
                 for (; _pos < _length; ++_pos)
                 {
                     if (_buffer[_pos] == '\r') continue;
@@ -54,27 +55,58 @@ namespace MemcachedSharp
                     {
                         ++_pos;
                         ms.Position = 0;
-                        return _encoding.GetString(ms.ToArray());
+                        var line = _encoding.GetString(ms.ToArray());
+                        var result = new ResponseLine(line);
+                        if (validate) result.Validate();
+                        return result;
                     }
                     ms.WriteByte(_buffer[_pos]);
                 }
             }
-
-            throw new EndOfStreamException("Unexpected end of stream");
         }
 
-        public async Task<MemoryStream> ReadBody(int length)
+        public async Task<MemcachedItem> ReadItem()
         {
-            var ms = new MemoryStream(length);
-            while (length > 0 && await EnsureBuffer())
+            var line = await ReadLine();
+
+            if (line.Parts[0] == "END") return null; // end of items
+            if (line.Parts[0] != "VALUE") throw new MemcachedException("Invalid response line - " + line);
+            if (line.Parts.Length < 4) throw new MemcachedException("Invalid response line - " + line);
+
+            var responseKey = line.Parts[1];
+            uint flags;
+            int bytes;
+            long? casUnique = null;
+
+            if (!uint.TryParse(line.Parts[2], out flags)) throw new MemcachedException("Invalid response line - " + line);
+            if (!int.TryParse(line.Parts[3], out bytes) || bytes < 0) throw new MemcachedException("Invalid response line - " + line);
+            if (line.Parts.Length > 4)
             {
-                var count = Math.Min(length, _length - _pos);
-                await ms.WriteAsync(_buffer, _pos, count);
-                _pos += count;
-                length -= count;
+                long temp;
+                if (!long.TryParse(line.Parts[4], out temp)) throw new MemcachedException("Invalid response line - " + line);
+                casUnique = temp;
             }
-            ms.Position = 0;
-            return ms;
+
+            // read the body of the item
+            var body = new MemoryStream(bytes);
+            while (bytes > 0 && (_pos < _length || await EnsureBuffer(true)))
+            {
+                var count = Math.Min(bytes, _length - _pos);
+                body.Write(_buffer, _pos, count);
+                _pos += count;
+                bytes -= count;
+            }
+            body.Position = 0;
+
+            // read the endline
+            while (_pos < _length || await EnsureBuffer(true))
+            {
+                if (_buffer[_pos] == '\r') { ++_pos; continue; }
+                if (_buffer[_pos] == '\n') { ++_pos; break; }
+                throw new MemcachedException("Unexpected character encountered - (byte)" + _buffer[_pos]);
+            }
+
+            return new MemcachedItem(responseKey, flags, body.Length, casUnique, body);
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -47,43 +46,29 @@ namespace MemcachedSharp
             var commandLine = ("get " + key + "\r\n").ToUtf8();
             await _stream.WriteAsync(commandLine, 0, commandLine.Length);
 
-            var line = await _reader.ReadLine();
-            var parts = line.Split(' ');
-            ValidateResponse(line, parts);
+            var result = await _reader.ReadItem();
 
-            if (!parts[0].Equals("VALUE", StringComparison.OrdinalIgnoreCase))
+            if (result != null)
             {
-                throw new MemcachedException("Invalid response line - " + line);
+                var nextItem = await _reader.ReadItem();
+                if (nextItem != null)
+                {
+                    throw new MemcachedException("Memcached returned more items than expected.");
+                }
             }
 
-            if (parts.Length < 4) throw new MemcachedException("Invalid response line - " + line);
-
-            var responseKey = parts[1];
-            uint flags;
-            int bytes;
-            long? casUnique = null;
-
-            if (!uint.TryParse(parts[2], out flags)) throw new MemcachedException("Invalid response line - " + line);
-            if (!int.TryParse(parts[3], out bytes) || bytes < 0) throw new MemcachedException("Invalid response line - " + line);
-            if (parts.Length > 4)
-            {
-                long temp;
-                if (!long.TryParse(parts[4], out temp)) throw new MemcachedException("Invalid response line - " + line);
-                casUnique = temp;
-            }
-
-            var body = await _reader.ReadBody(bytes);
-            var endline = await _reader.ReadLine();
-            if (endline.Length > 0) throw new MemcachedException("Unexpected line read - " + endline);
-
-            endline = await _reader.ReadLine();
-            if (endline != "END") throw new MemcachedException("Unexpected line read - " + endline);
-
-            return new MemcachedItem(responseKey, flags, bytes, casUnique, body);
+            return result;
         }
 
-        public async Task Set(string key, byte[] value, MemcachedStorageOptions options = null)
+        public Task Set(string key, byte[] value, MemcachedStorageOptions options = null)
         {
+            if (value == null) throw new ArgumentNullException("value");
+            return Set(key, value, 0, value.Length, options);
+        }
+
+        public async Task Set(string key, byte[] value, int offset, int count, MemcachedStorageOptions options = null)
+        {
+            if (value == null) throw new ArgumentNullException("value");
             ValidateKey(key);
             EnsureOpen();
 
@@ -92,34 +77,30 @@ namespace MemcachedSharp
             var commandLine = options.GetComandLine("set", key, value.Length).ToUtf8();
             var requestData = new [] {
                 new ArraySegment<byte>(commandLine),
-                new ArraySegment<byte>(value),
+                new ArraySegment<byte>(value, offset, count),
                 new ArraySegment<byte>(_endLineBuffer),
             };
-            _socket.SendAsync(requestData);
+            await _socket.SendAsync(requestData);
 
-            var responseLine = await _reader.ReadLine();
-            var parts = responseLine.Split(' ');
-            ValidateResponse(responseLine, parts);
-
-            if (parts[0] != "STORED")
+            var line = await _reader.ReadLine();
+            if (line.Parts[0] != "STORED")
             {
-                throw new MemcachedException("Unexpected response line - " + responseLine);
+                throw new MemcachedException("Unexpected response line - " + line);
             }
         }
 
-        static readonly HashSet<string> _errorResponses = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        public async Task<bool> Delete(string key)
         {
-            "ERROR",
-            "CLIENT_ERROR",
-            "SERVER_ERROR",
-        };
+            ValidateKey(key);
+            EnsureOpen();
 
-        private void ValidateResponse(string line, string[] lineParts)
-        {
-            if (lineParts.Length == 0 || _errorResponses.Contains(lineParts[0]))
-            {
-                throw new MemcachedException(line);
-            }
+            var commandLine = string.Format("delete {0}\r\n", key);
+            await _socket.SendAsync(commandLine.ToUtf8());
+
+            var responseLine = await _reader.ReadLine();
+            if (responseLine.Parts[0] == "DELETED") return true;
+            if (responseLine.Parts[0] == "NOT_FOUND") return false;
+            throw new MemcachedException("Unexpected response line - " + responseLine);
         }
 
         private void ValidateKey(string key)
