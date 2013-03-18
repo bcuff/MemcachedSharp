@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using MemcachedSharp.Commands;
 
 namespace MemcachedSharp
 {
@@ -33,6 +34,16 @@ namespace MemcachedSharp
             {
                 throw new ArgumentOutOfRangeException("count", "offset + count cannot be greater than buffer.Length");
             }
+        }
+
+        public static MemcachedException CreateUnexpectedResponseLine(string responseLine)
+        {
+            return new MemcachedException("Unexpected response line - " + responseLine);
+        }
+
+        public static MemcachedException CreateUnexpectedStorageResponse(StorageCommandResult expected, StorageCommandResult actual)
+        {
+            return new MemcachedException(string.Format("Unexpceted response from set; expected={0} actual={1}", expected, actual));
         }
     }
 }

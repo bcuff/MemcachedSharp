@@ -10,6 +10,11 @@ namespace MemcachedSharp
 {
     public static class SocketExtensions
     {
+        internal static Task SendAsync(this ISocket socket, byte[] data, SocketFlags flags = SocketFlags.None)
+        {
+            return socket.SendAsync(data, 0, data.Length, flags);
+        }
+
         public static Task ConnectAsync(this Socket socket, EndPoint endPoint)
         {
             if (socket == null) throw new ArgumentNullException("socket");

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MemcachedSharp
 {
-    internal class Pool<T> : IDisposable
+    internal class Pool<T> : IPool<T>
     {
         readonly Stack<T> _items = new Stack<T>();
         readonly AsyncSemaphore _semaphore;

@@ -4,7 +4,9 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
- namespace MemcachedSharp
+using MemcachedSharp.Commands;
+
+namespace MemcachedSharp
 {
     public class MemcachedClient : IDisposable
     {
@@ -46,21 +48,10 @@ using System.Threading.Tasks;
         /// <returns>
         /// A task containing a <c>MemcachedItem</c> that encapsulates the resposne and data if found; othwerwise <c>null</c>.
         /// </returns>
-        public async Task<MemcachedItem> Get(string key)
+        public Task<MemcachedItem> Get(string key)
         {
             Util.ValidateKey(key);
-            using (var conn = await _pool.Borrow())
-            {
-                try
-                {
-                    return await conn.Item.InternalGet(key);
-                }
-                catch
-                {
-                    conn.IsCorrupted = true;
-                    throw;
-                }
-            }
+            return Execute(new GetCommand { Key = key, });
         }
 
         /// <summary>
@@ -95,17 +86,16 @@ using System.Threading.Tasks;
 
         internal async Task InternalSet(string key, byte[] buffer, int offset, int count, MemcachedStorageOptions options = null)
         {
-            using (var conn = await _pool.Borrow())
+            var command = new SetCommand
             {
-                try
-                {
-                    await conn.Item.InternalSet(key, buffer, offset, count, options);
-                }
-                catch
-                {
-                    conn.IsCorrupted = true;
-                    throw;
-                }
+                Key = key,
+                Data = new ArraySegment<byte>(buffer, offset, count),
+                Options = options,
+            };
+            var result = await Execute(command);
+            if (result != StorageCommandResult.Stored)
+            {
+                throw Util.CreateUnexpectedStorageResponse(StorageCommandResult.Stored, result);
             }
         }
 
@@ -114,13 +104,18 @@ using System.Threading.Tasks;
         /// </summary>
         /// <param name="key">The key of the item to delete. Must be between 1 and 250 characters and may not contain whitespace or control characters.</param>
         /// <returns>A task that completes when the operation finishes successfully or faults in the event of a failure.</returns>
-        public async Task Delete(string key)
+        public Task<bool> Delete(string key)
+        {
+            return Execute(new DeleteCommand { Key = key });
+        }
+
+        private async Task<T> Execute<T>(ICommand<T> command)
         {
             using (var conn = await _pool.Borrow())
             {
                 try
                 {
-                    await conn.Item.InternalDelete(key);
+                    return await conn.Item.Execute(command);
                 }
                 catch
                 {

@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace MemcachedSharp
 {
-    interface IPooledItem<T> : IDisposable
+    interface IPooledItem<out T> : IDisposable
     {
         T Item { get; }
         bool IsCorrupted { get; set; }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MemcachedSharp
 {
-    internal class MemcachedResponseReader
+    internal class MemcachedResponseReader : IResponseReader
     {
         readonly Stream _stream;
         readonly Encoding _encoding;
