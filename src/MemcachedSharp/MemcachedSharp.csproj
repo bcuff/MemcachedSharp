@@ -44,10 +44,13 @@
   <ItemGroup>
     <Compile Include="AsyncSemaphore.cs" />
     <Compile Include="DateTimeExtensions.cs" />
+    <Compile Include="DnsExtensions.cs" />
     <Compile Include="IPooledItem.cs" />
+    <Compile Include="MemcachedClient.cs" />
     <Compile Include="MemcachedConnection.cs" />
     <Compile Include="MemcachedException.cs" />
     <Compile Include="MemcachedItem.cs" />
+    <Compile Include="MemcachedOptions.cs" />
     <Compile Include="MemcachedStorageOptions.cs" />
     <Compile Include="MemcachedResponseReader.cs" />
     <Compile Include="Pool.cs" />
@@ -56,6 +59,7 @@
     <Compile Include="ResponseLine.cs" />
     <Compile Include="SocketExtensions.cs" />
     <Compile Include="StringExtensions.cs" />
+    <Compile Include="Util.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

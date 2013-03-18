@@ -5,11 +5,12 @@ using System.Threading.Tasks;
 
 namespace MemcachedSharp
 {
-    internal class Pool<T>
+    internal class Pool<T> : IDisposable
     {
         readonly Stack<T> _items = new Stack<T>();
         readonly AsyncSemaphore _semaphore;
         readonly Func<Task<T>> _creationFactory;
+        bool _disposed;
 
         public Pool(Func<Task<T>> creationFactory, PoolOptions options = null)
         {
@@ -27,6 +28,7 @@ namespace MemcachedSharp
 
         public async Task<IPooledItem<T>> Borrow()
         {
+            if (_disposed) throw new ObjectDisposedException(GetType().Name);
             if (_semaphore != null) await _semaphore.Wait();
             try
             {
@@ -34,6 +36,7 @@ namespace MemcachedSharp
                 T item = default(T);
                 lock (_items)
                 {
+                    if (_disposed) throw new ObjectDisposedException(GetType().Name);
                     gotItem = _items.Count > 0;
                     if (gotItem) item = _items.Pop();
                 }
@@ -50,11 +53,41 @@ namespace MemcachedSharp
             }
         }
 
+        public void Dispose()
+        {
+            lock (_items)
+            {
+                _disposed = true;
+                List<Exception> exceptions = null;
+                while (_items.Count > 0)
+                {
+                    var item = _items.Pop();
+                    var disposable = item as IDisposable;
+                    if (disposable != null)
+                    {
+                        try
+                        {
+                            disposable.Dispose();
+                        }
+                        catch (Exception e)
+                        {
+                            if (exceptions == null) exceptions = new List<Exception>();
+                            exceptions.Add(e);
+                        }
+                    }
+                }
+                if (exceptions != null)
+                {
+                    throw new AggregateException(exceptions);
+                }
+            }
+        }
+
         private void Return(T item, bool isCorrupted)
         {
             try
             {
-                if (isCorrupted)
+                if (isCorrupted || _disposed)
                 {
                     var disposable = item as IDisposable;
                     if (disposable != null) disposable.Dispose();

@@ -38,13 +38,18 @@ namespace MemcachedSharp
             _reader = new MemcachedResponseReader(_stream, Encoding.UTF8);
         }
 
-        public async Task<MemcachedItem> Get(string key)
+        public Task<MemcachedItem> Get(string key)
         {
-            ValidateKey(key);
+            Util.ValidateKey(key);
+            return InternalGet(key);
+        }
+
+        internal async Task<MemcachedItem> InternalGet(string key)
+        {
             EnsureOpen();
 
             var commandLine = ("get " + key + "\r\n").ToUtf8();
-            await _stream.WriteAsync(commandLine, 0, commandLine.Length);
+            await _socket.SendAsync(commandLine, 0, commandLine.Length);
 
             var result = await _reader.ReadItem();
 
@@ -62,14 +67,20 @@ namespace MemcachedSharp
 
         public Task Set(string key, byte[] value, MemcachedStorageOptions options = null)
         {
+            Util.ValidateKey(key);
             if (value == null) throw new ArgumentNullException("value");
-            return Set(key, value, 0, value.Length, options);
+            return InternalSet(key, value, 0, value.Length, options);
         }
 
-        public async Task Set(string key, byte[] value, int offset, int count, MemcachedStorageOptions options = null)
+        public Task Set(string key, byte[] buffer, int offset, int count, MemcachedStorageOptions options = null)
         {
-            if (value == null) throw new ArgumentNullException("value");
-            ValidateKey(key);
+            Util.ValidateKey(key);
+            Util.ValidateBuffer(buffer, offset, count);
+            return InternalSet(key, buffer, offset, count, options);
+        }
+
+        internal async Task InternalSet(string key, byte[] value, int offset, int count, MemcachedStorageOptions options = null)
+        {
             EnsureOpen();
 
             if(options == null) options = _defaultStorageOptions;
@@ -89,11 +100,16 @@ namespace MemcachedSharp
             }
         }
 
-        public async Task<bool> Delete(string key)
+        public Task<bool> Delete(string key)
         {
-            ValidateKey(key);
-            EnsureOpen();
+            Util.ValidateKey(key);
 
+            return InternalDelete(key);
+        }
+
+        internal async Task<bool> InternalDelete(string key)
+        {
+            EnsureOpen();
             var commandLine = string.Format("delete {0}\r\n", key);
             await _socket.SendAsync(commandLine.ToUtf8());
 
@@ -101,17 +117,6 @@ namespace MemcachedSharp
             if (responseLine.Parts[0] == "DELETED") return true;
             if (responseLine.Parts[0] == "NOT_FOUND") return false;
             throw new MemcachedException("Unexpected response line - " + responseLine);
-        }
-
-        private void ValidateKey(string key)
-        {
-            if (key == null) throw new ArgumentNullException("key");
-            if (key.Length > 250) throw new ArgumentException("key must be no more than 250 characters in length", "key");
-            for (int i = 0; i < key.Length; ++i)
-            {
-                if (char.IsWhiteSpace(key[i])) throw new ArgumentException("key may not contain whitespace at position=" + i + " key=" + key, "key");
-                if (char.IsControl(key[i])) throw new ArgumentException("key may not contain control characters at position=" + i + " key=" + key, "key");
-            }
         }
 
         private void EnsureOpen()
