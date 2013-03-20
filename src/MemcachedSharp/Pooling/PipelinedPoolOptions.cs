@@ -9,13 +9,11 @@ namespace MemcachedSharp
     {
         public PipelinedPoolOptions()
         {
-            MinTargetItemCount = 2;
-            MaxTargetItemCount = 8;
+            TargetItemCount = 2;
             MaxRequestsPerItem = 10;
         }
 
-        public int MinTargetItemCount { get; set; }
-        public int MaxTargetItemCount { get; set; }
+        public int TargetItemCount { get; set; }
         public int MaxRequestsPerItem { get; set; }
     }
 }

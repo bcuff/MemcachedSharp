@@ -10,8 +10,12 @@ namespace MemcachedSharp
         public MemcachedOptions()
         {
             MaxConnections = 2;
+            MaxConcurrentRequestPerConnection = 15;
+            EnablePipelining = true;
         }
 
+        public bool EnablePipelining { get; set; }
+        public int MaxConcurrentRequestPerConnection { get; set; }
         public int MaxConnections { get; set; }
     }
 }

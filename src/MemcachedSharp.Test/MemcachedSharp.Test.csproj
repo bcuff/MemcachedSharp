@@ -51,6 +51,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="MemcachedResponseReaderTest.cs" />
+    <Compile Include="Pooling\PipelinedPoolTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

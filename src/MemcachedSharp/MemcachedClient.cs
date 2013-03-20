@@ -13,13 +13,14 @@ namespace MemcachedSharp
         readonly int _port;
         readonly string _host;
         readonly IPAddress _ip;
-        readonly Pool<MemcachedConnection> _pool; 
+        readonly IPool<MemcachedConnection> _pool;
 
         public MemcachedClient(string endpoint, MemcachedOptions options = null)
         {
             if (endpoint == null) throw new ArgumentNullException("endpoint");
-            var parts = endpoint.Split(new[] { ':' }, StringSplitOptions.None);
-            if (parts.Length == 0 || parts.Length > 2) throw new ArgumentException("Invalid endpoint parameter", "endpoint");
+            var parts = endpoint.Split(new[] {':'}, StringSplitOptions.None);
+            if (parts.Length == 0 || parts.Length > 2)
+                throw new ArgumentException("Invalid endpoint parameter", "endpoint");
             if (parts.Length == 2)
             {
                 if (!int.TryParse(parts[1], out _port))
@@ -35,10 +36,21 @@ namespace MemcachedSharp
             IPAddress.TryParse(_host, out _ip);
 
             if (options == null) options = new MemcachedOptions();
-            _pool = new Pool<MemcachedConnection>(CreateConnection, new PoolOptions
+            if (options.EnablePipelining)
             {
-                MaxCount = options.MaxConnections,
-            });
+                _pool = new PipelinedPool<MemcachedConnection>(CreateConnection, new PipelinedPoolOptions
+                {
+                    TargetItemCount = options.MaxConnections,
+                    MaxRequestsPerItem = options.MaxConcurrentRequestPerConnection,
+                });
+            }
+            else
+            {
+                _pool = new Pool<MemcachedConnection>(CreateConnection, new PoolOptions
+                {
+                    MaxCount = options.MaxConnections,
+                });
+            }
         }
 
         /// <summary>
