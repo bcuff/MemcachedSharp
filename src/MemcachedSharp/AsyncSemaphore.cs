@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MemcachedSharp
 {
-    public class AsyncSemaphore
+    internal class AsyncSemaphore
     {
         readonly Queue<Waiter> _waiters = new Queue<Waiter>();
         int _count;

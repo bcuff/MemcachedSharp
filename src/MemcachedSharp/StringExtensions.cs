@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MemcachedSharp
 {
-    public static class StringExtensions
+    internal static class StringExtensions
     {
         private static readonly Encoding _utf8NoBom = new UTF8Encoding(false, true);
 

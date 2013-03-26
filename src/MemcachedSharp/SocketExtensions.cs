@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace MemcachedSharp
 {
-    public static class SocketExtensions
+    internal static class SocketExtensions
     {
         internal static Task SendAsync(this ISocket socket, byte[] data, SocketFlags flags = SocketFlags.None)
         {
