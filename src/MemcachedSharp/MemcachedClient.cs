@@ -15,6 +15,20 @@ namespace MemcachedSharp
         readonly IPAddress _ip;
         readonly IPool<MemcachedConnection> _pool;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MemcachedClient"/> class.
+        /// </summary>
+        /// <param name="endpoint">
+        ///     <para>The host name or IP address and, optionally, the port number of the target memcached server.</para>
+        ///     <para>Examples: "localhost:11211", "127.0.0.1"</para>
+        /// </param>
+        /// <param name="options">Optional. A set of options for the client.</param>
+        /// <exception cref="ArgumentNullException">
+        ///     <para><paramref name="endpoint"/> is <c>null</c>.</para>
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        ///     <para><paramref name="endpoint"/> is invalid.</para>
+        /// </exception>
         public MemcachedClient(string endpoint, MemcachedOptions options = null)
         {
             if (endpoint == null) throw new ArgumentNullException("endpoint");
