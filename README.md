@@ -1,4 +1,4 @@
 MemcachedSharp
 ==============
 
-A light-weight, async/non-blocking Memcached client for .NE
+A light-weight, async/non-blocking Memcached client for .NET
