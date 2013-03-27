@@ -22,8 +22,8 @@ namespace MemcachedSharp
             }
 
             var token = new CancellationTokenSource();
-            var delay = Task.Delay(timeout, token.Token);
-            var result = await Task.WhenAny(new[] { task, delay });
+            var delay = TaskEx.Delay(timeout, token.Token);
+            var result = await TaskPort.WhenAny(task, delay);
             if (result == delay)
             {
                 throw new TimeoutException("Task timed out after " + timeout);
@@ -39,8 +39,8 @@ namespace MemcachedSharp
             if (timeout == _infinite || task.IsCompleted) return await task;
 
             var token = new CancellationTokenSource();
-            var delay = Task.Delay(timeout, token.Token);
-            var result = await Task.WhenAny(new[] { task, delay });
+            var delay = TaskPort.Delay(timeout, token.Token);
+            var result = await TaskPort.WhenAny(task, delay);
             if (result == delay)
             {
                 throw new TimeoutException("Task timed out after " + timeout);

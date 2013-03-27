@@ -9,16 +9,26 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemcachedSharp.Test", "Memc
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug.net40|Any CPU = Debug.net40|Any CPU
 		Debug|Any CPU = Debug|Any CPU
+		Release.net40|Any CPU = Release.net40|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{761D5804-02C8-466C-978B-8209EA7BC788}.Debug.net40|Any CPU.ActiveCfg = Debug.net40|Any CPU
+		{761D5804-02C8-466C-978B-8209EA7BC788}.Debug.net40|Any CPU.Build.0 = Debug.net40|Any CPU
 		{761D5804-02C8-466C-978B-8209EA7BC788}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{761D5804-02C8-466C-978B-8209EA7BC788}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{761D5804-02C8-466C-978B-8209EA7BC788}.Release.net40|Any CPU.ActiveCfg = Release.net40|Any CPU
+		{761D5804-02C8-466C-978B-8209EA7BC788}.Release.net40|Any CPU.Build.0 = Release.net40|Any CPU
 		{761D5804-02C8-466C-978B-8209EA7BC788}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{761D5804-02C8-466C-978B-8209EA7BC788}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10398387-BA80-4BA3-8AB5-5DC6F39821B1}.Debug.net40|Any CPU.ActiveCfg = Debug.net40|Any CPU
+		{10398387-BA80-4BA3-8AB5-5DC6F39821B1}.Debug.net40|Any CPU.Build.0 = Debug.net40|Any CPU
 		{10398387-BA80-4BA3-8AB5-5DC6F39821B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{10398387-BA80-4BA3-8AB5-5DC6F39821B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10398387-BA80-4BA3-8AB5-5DC6F39821B1}.Release.net40|Any CPU.ActiveCfg = Release.net40|Any CPU
+		{10398387-BA80-4BA3-8AB5-5DC6F39821B1}.Release.net40|Any CPU.Build.0 = Release.net40|Any CPU
 		{10398387-BA80-4BA3-8AB5-5DC6F39821B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{10398387-BA80-4BA3-8AB5-5DC6F39821B1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection

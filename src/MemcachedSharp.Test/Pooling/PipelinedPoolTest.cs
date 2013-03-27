@@ -21,7 +21,7 @@ namespace MemcachedSharp.Test.Pooling
         public async Task TestSimpleReuse()
         {
             var i = 0;
-            var pool = new PipelinedPool<int>(() => Task.FromResult(++i));
+            var pool = new PipelinedPool<int>(() => TaskPort.FromResult(++i));
             using (var item = await pool.Borrow())
             {
                 Assert.AreEqual(1, item.Item);
@@ -37,7 +37,7 @@ namespace MemcachedSharp.Test.Pooling
         public async Task TestMaxItemCount()
         {
             var nextItem = 0;
-            var pool = new PipelinedPool<int>(() => Task.FromResult(++nextItem), new PipelinedPoolOptions
+            var pool = new PipelinedPool<int>(() => TaskPort.FromResult(++nextItem), new PipelinedPoolOptions
             {
                 MaxRequestsPerItem = 10,
                 TargetItemCount = 2,
