@@ -6,6 +6,10 @@ A light-weight, async/non-blocking Memcached client for .NET
 #Example
 
 ```c#
+using System;
+using MemcachedSharp;
+using System.Threading.Tasks;
+
 using(var client = new MemcachedClient("localhost:11211"))
 {
 	Console.Write("get foo...");
