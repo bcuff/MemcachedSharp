@@ -8,6 +8,13 @@ using MemcachedSharp.Commands;
 
 namespace MemcachedSharp
 {
+    /// <summary>
+    /// Encapsulates a client that may perform operations against a specified Memcached host.
+    /// </summary>
+    /// <remarks>
+    /// Instances are stateful and internally pool connections to the specified host.
+    /// Instances of this class ought to be disposed when they are no longer needed.
+    /// </remarks>
     public class MemcachedClient : IDisposable
     {
         readonly int _port;

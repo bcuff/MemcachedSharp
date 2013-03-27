@@ -22,7 +22,7 @@ namespace MemcachedSharp
             }
 
             var token = new CancellationTokenSource();
-            var delay = TaskEx.Delay(timeout, token.Token);
+            var delay = TaskPort.Delay(timeout, token.Token);
             var result = await TaskPort.WhenAny(task, delay);
             if (result == delay)
             {

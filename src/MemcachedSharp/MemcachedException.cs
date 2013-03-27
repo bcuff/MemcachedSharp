@@ -6,6 +6,9 @@ using System.Text;
 
 namespace MemcachedSharp
 {
+    /// <summary>
+    /// Represents errors that occurr that are related to Memcached.
+    /// </summary>
     [Serializable]
     public sealed class MemcachedException : Exception
     {
