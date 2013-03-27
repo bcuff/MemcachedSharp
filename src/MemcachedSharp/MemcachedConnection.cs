@@ -70,7 +70,7 @@ namespace MemcachedSharp
             Dispose();
         }
 
-        public async Task Open()
+        public async Task Open(TimeSpan timeout)
         {
             if (_state != MemcachedConnectionState.UnOpened) throw new InvalidOperationException("This connection has already been opened.");
 
@@ -79,7 +79,7 @@ namespace MemcachedSharp
             {
                 try
                 {
-                    connectTask = _socket.ConnectAsync(_endPoint);
+                    connectTask = _socket.ConnectAsync(_endPoint).TimeoutAfter(timeout);
                     _state = MemcachedConnectionState.Opening;
                 }
                 catch

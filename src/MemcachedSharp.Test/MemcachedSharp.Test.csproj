@@ -53,6 +53,7 @@
     <Compile Include="MemcachedResponseReaderTest.cs" />
     <Compile Include="Pooling\PipelinedPoolTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TaskExtensionsTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MemcachedSharp\MemcachedSharp.csproj">

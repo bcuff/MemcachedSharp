@@ -12,6 +12,7 @@ namespace MemcachedSharp
     {
         readonly int _port;
         readonly string _host;
+        readonly TimeSpan _connectTimeout;
         readonly IPAddress _ip;
         readonly IPool<MemcachedConnection> _pool;
 
@@ -49,7 +50,17 @@ namespace MemcachedSharp
             _host = parts[0];
             IPAddress.TryParse(_host, out _ip);
 
-            if (options == null) options = new MemcachedOptions();
+            if (options == null)
+            {
+                options = new MemcachedOptions();
+            }
+            else
+            {
+                options.Validate("options");
+            }
+
+            _connectTimeout = options.ConnectTimeout;
+
             if (options.EnablePipelining)
             {
                 _pool = new PipelinedPool<MemcachedConnection>(CreateConnection, new PipelinedPoolOptions
@@ -161,7 +172,7 @@ namespace MemcachedSharp
             }
             var endpoint = new IPEndPoint(address, _port);
             var conn = new MemcachedConnection(endpoint);
-            await conn.Open();
+            await conn.Open(_connectTimeout);
             return conn;
         }
 
