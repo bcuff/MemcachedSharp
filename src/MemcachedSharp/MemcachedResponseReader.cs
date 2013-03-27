@@ -10,16 +10,18 @@ namespace MemcachedSharp
     {
         readonly Stream _stream;
         readonly Encoding _encoding;
+        readonly TimeSpan _receiveTimeout;
         readonly byte[] _buffer;
         int _pos;
         int _length;
 
-        public MemcachedResponseReader(Stream stream, Encoding encoding)
+        public MemcachedResponseReader(Stream stream, Encoding encoding, TimeSpan receiveTimeout)
         {
             if (stream == null) throw new ArgumentNullException("stream");
 
             _stream = stream;
             _encoding = encoding ?? Encoding.UTF8;
+            _receiveTimeout = receiveTimeout;
             _buffer = new byte[4 << 10];
         }
 
@@ -31,7 +33,8 @@ namespace MemcachedSharp
                     (ac, state) => _stream.BeginRead(_buffer, 0, _buffer.Length, ac, state),
                     _stream.EndRead,
                     null,
-                    TaskCreationOptions.None);
+                    TaskCreationOptions.None)
+                    .TimeoutAfter(_receiveTimeout);
                 if (_length == 0)
                 {
                     if (throwOnEndOfStream) throw new MemcachedException("Unexpected end of stream");

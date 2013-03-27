@@ -10,12 +10,14 @@ namespace MemcachedSharp
         public MemcachedOptions()
         {
             ConnectTimeout = TimeSpan.FromSeconds(2);
+            ReceiveTimeout = TimeSpan.FromSeconds(2);
             MaxConnections = 2;
             MaxConcurrentRequestPerConnection = 15;
             EnablePipelining = true;
         }
 
         public TimeSpan ConnectTimeout { get; set; }
+        public TimeSpan ReceiveTimeout { get; set; }
         public bool EnablePipelining { get; set; }
         public int MaxConcurrentRequestPerConnection { get; set; }
         public int MaxConnections { get; set; }

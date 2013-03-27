@@ -13,7 +13,7 @@ namespace MemcachedSharp.Test
         [ExpectedException(typeof(ArgumentNullException))]
         public void TestConstructorThrowsArgumentNull()
         {
-            new MemcachedResponseReader(null, null);
+            new MemcachedResponseReader(null, null, TimeSpan.FromSeconds(1));
         }
 
         [TestMethod]
@@ -31,7 +31,7 @@ namespace MemcachedSharp.Test
 
                 stream.Position = 0;
 
-                var reader = new MemcachedResponseReader(stream, writer.Encoding);
+                var reader = new MemcachedResponseReader(stream, writer.Encoding, TimeSpan.FromSeconds(1));
 
                 var resultLine = await reader.ReadLine();
                 Assert.AreEqual(line, resultLine.Line);
@@ -53,7 +53,7 @@ namespace MemcachedSharp.Test
                 writer.Write("\r\n");
                 writer.Flush();
 
-                var reader = new MemcachedResponseReader(stream, writer.Encoding);
+                var reader = new MemcachedResponseReader(stream, writer.Encoding, TimeSpan.FromSeconds(1));
                 await reader.ReadLine();
             }
         }
@@ -78,7 +78,7 @@ namespace MemcachedSharp.Test
                 writer.Flush();
 
                 stream.Position = 0;
-                var reader = new MemcachedResponseReader(stream, writer.Encoding);
+                var reader = new MemcachedResponseReader(stream, writer.Encoding, TimeSpan.FromSeconds(1));
                 for (int i = 0; i < keys.Length; ++i)
                 {
                     var item = await reader.ReadItem();

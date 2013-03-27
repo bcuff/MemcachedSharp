@@ -14,6 +14,7 @@ namespace MemcachedSharp
         readonly object _syncRoot = new object();
         readonly IPEndPoint _endPoint;
         readonly AsyncSemaphore _responseSemaphore = new AsyncSemaphore(1);
+        readonly TimeSpan _receiveTimeout;
         Socket _socket;
         ISocket _isocket;
         NetworkStream _stream;
@@ -21,11 +22,12 @@ namespace MemcachedSharp
         MemcachedConnectionState _state;
         bool _disposed;
 
-        public MemcachedConnection(IPEndPoint endPoint)
+        public MemcachedConnection(IPEndPoint endPoint, TimeSpan receiveTimeout)
         {
             if (endPoint == null) throw new ArgumentNullException("endPoint");
 
             _endPoint = endPoint;
+            _receiveTimeout = receiveTimeout;
             _socket = new Socket(endPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp)
             {
                 NoDelay = true
@@ -101,7 +103,7 @@ namespace MemcachedSharp
             lock (_syncRoot)
             {
                 _stream = new NetworkStream(_socket);
-                _reader = new MemcachedResponseReader(_stream, Encoding.UTF8);
+                _reader = new MemcachedResponseReader(_stream, Encoding.UTF8, _receiveTimeout);
                 _isocket = new MemcachedSocket(_socket);
                 _state = MemcachedConnectionState.Open;
             }
