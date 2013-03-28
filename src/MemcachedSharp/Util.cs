@@ -40,10 +40,5 @@ namespace MemcachedSharp
         {
             return new MemcachedException("Unexpected response line - " + responseLine);
         }
-
-        public static MemcachedException CreateUnexpectedStorageResponse(StorageCommandResult expected, StorageCommandResult actual)
-        {
-            return new MemcachedException(string.Format("Unexpceted response from set; expected={0} actual={1}", expected, actual));
-        }
     }
 }

@@ -41,15 +41,24 @@ namespace MemcachedSharp.Commands
             });
         }
 
-        public override async Task<StorageCommandResult> ReadResponse(IResponseReader reader)
+        public override sealed async Task<StorageCommandResult> ReadResponse(IResponseReader reader)
         {
             var line = await reader.ReadLine();
             StorageCommandResult result;
             if (_storageResults.TryGetValue(line.Parts[0], out result))
             {
+                ValidateResponse(result, line.Line);
                 return result;
             }
             throw Util.CreateUnexpectedResponseLine(line.Line);
+        }
+
+        protected abstract void ValidateResponse(StorageCommandResult result, string responseLine);
+
+        protected Exception CreateUnexpectedResponse(string responseLine)
+        {
+            var message = string.Format("Unexpected response from {0} command; responseLine={1}", Verb, responseLine);
+            return new MemcachedException(message);
         }
     }
 }

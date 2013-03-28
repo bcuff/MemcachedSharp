@@ -8,5 +8,13 @@ namespace MemcachedSharp.Commands
         {
             get { return "add"; }
         }
+
+        protected override void ValidateResponse(StorageCommandResult result, string responseLine)
+        {
+            if (result != StorageCommandResult.Stored && result != StorageCommandResult.NotStored)
+            {
+                throw CreateUnexpectedResponse(responseLine);
+            }
+        }
     }
 }
