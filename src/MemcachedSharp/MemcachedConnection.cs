@@ -66,6 +66,11 @@ namespace MemcachedSharp
             }
         }
 
+        public MemcachedConnectionState State
+        {
+            get { return _state; }
+        }
+
         private void SetFaulted()
         {
             _state = MemcachedConnectionState.Faulted;

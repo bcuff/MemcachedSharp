@@ -10,17 +10,19 @@ namespace MemcachedSharp
     internal class PipelinedPool<T> : IPool<T>
     {
         readonly Func<Task<T>> _createFactory;
+        readonly Func<T, bool> _itemValidator;
         readonly int _targetItemCount;
         readonly int _maxRequestsPerItem;
         readonly List<ResidentItem> _items;
         readonly LinkedList<TaskCompletionSource<ResidentItem>> _waiters;
         bool _disposed;
 
-        public PipelinedPool(Func<Task<T>> createFactory, PipelinedPoolOptions options = null)
+        public PipelinedPool(Func<Task<T>> createFactory, Func<T, bool> itemValidator = null, PipelinedPoolOptions options = null)
         {
             if (createFactory == null) throw new ArgumentNullException("createFactory");
 
             _createFactory = createFactory;
+            _itemValidator = itemValidator ?? (v => true);
 
             if (options == null) options = new PipelinedPoolOptions();
             // target item count should be relatively small like 2 - 8
@@ -70,7 +72,7 @@ namespace MemcachedSharp
         public async Task<IPooledItem<T>> Borrow()
         {
             TaskCompletionSource<ResidentItem> waitItem = null;
-            ResidentItem result = null;
+            ResidentItem result;
             lock (_items)
             {
                 if (_disposed) throw new ObjectDisposedException(GetType().Name);
@@ -158,7 +160,14 @@ namespace MemcachedSharp
             {
                 var item = _item;
                 _item = null;
-                item.Return(IsCorrupted);
+                try
+                {
+                    IsCorrupted = IsCorrupted || !item.Owner._itemValidator(item.Value);
+                }
+                finally
+                {
+                    item.Return(IsCorrupted);
+                }
             }
         }
 
@@ -176,6 +185,11 @@ namespace MemcachedSharp
             }
 
             public T Value { get; private set; }
+
+            public PipelinedPool<T> Owner
+            {
+                get { return _owner; }
+            }
 
             public Task EnsureValueCreated()
             {

@@ -72,7 +72,7 @@ namespace MemcachedSharp
 
             if (options.EnablePipelining)
             {
-                _pool = new PipelinedPool<MemcachedConnection>(CreateConnection, new PipelinedPoolOptions
+                _pool = new PipelinedPool<MemcachedConnection>(CreateConnection, ValidateConnection, new PipelinedPoolOptions
                 {
                     TargetItemCount = options.MaxConnections,
                     MaxRequestsPerItem = options.MaxConcurrentRequestPerConnection,
@@ -80,7 +80,7 @@ namespace MemcachedSharp
             }
             else
             {
-                _pool = new Pool<MemcachedConnection>(CreateConnection, new PoolOptions
+                _pool = new Pool<MemcachedConnection>(CreateConnection, ValidateConnection, new PoolOptions
                 {
                     MaxCount = options.MaxConnections,
                 });
@@ -183,6 +183,11 @@ namespace MemcachedSharp
             var conn = new MemcachedConnection(endpoint, _receiveTimeout);
             await conn.Open(_connectTimeout);
             return conn;
+        }
+
+        private static bool ValidateConnection(MemcachedConnection connection)
+        {
+            return connection.State == MemcachedConnectionState.Open;
         }
 
         /// <summary>

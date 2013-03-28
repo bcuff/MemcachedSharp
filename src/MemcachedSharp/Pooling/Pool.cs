@@ -10,13 +10,15 @@ namespace MemcachedSharp
         readonly Stack<T> _items = new Stack<T>();
         readonly AsyncSemaphore _semaphore;
         readonly Func<Task<T>> _creationFactory;
+        readonly Func<T, bool> _itemValidator;
         bool _disposed;
 
-        public Pool(Func<Task<T>> creationFactory, PoolOptions options = null)
+        public Pool(Func<Task<T>> creationFactory, Func<T, bool> itemValidator = null, PoolOptions options = null)
         {
             if (creationFactory == null) throw new ArgumentNullException("creationFactory");
 
             _creationFactory = creationFactory;
+            _itemValidator = itemValidator ?? (v => true);
             if (options != null)
             {
                 if (options.MaxCount > 0)
@@ -87,16 +89,23 @@ namespace MemcachedSharp
         {
             try
             {
-                if (isCorrupted || _disposed)
+                try
                 {
-                    var disposable = item as IDisposable;
-                    if (disposable != null) disposable.Dispose();
+                    isCorrupted = isCorrupted || !_itemValidator(item);
                 }
-                else
+                finally
                 {
-                    lock (_items)
+                    if (isCorrupted || _disposed)
                     {
-                        _items.Push(item);
+                        var disposable = item as IDisposable;
+                        if (disposable != null) disposable.Dispose();
+                    }
+                    else
+                    {
+                        lock (_items)
+                        {
+                            _items.Push(item);
+                        }
                     }
                 }
             }

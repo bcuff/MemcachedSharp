@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -37,7 +38,7 @@ namespace MemcachedSharp.Test.Pooling
         public async Task TestMaxItemCount()
         {
             var nextItem = 0;
-            var pool = new PipelinedPool<int>(() => TaskPort.FromResult(++nextItem), new PipelinedPoolOptions
+            var pool = new PipelinedPool<int>(() => TaskPort.FromResult(++nextItem), null, new PipelinedPoolOptions
             {
                 MaxRequestsPerItem = 10,
                 TargetItemCount = 2,
@@ -65,6 +66,70 @@ namespace MemcachedSharp.Test.Pooling
                 item.Dispose();
             }
             waiter.Result.Dispose();
+        }
+
+        [TestMethod]
+        public async Task TestItemValidator()
+        {
+            var items = new List<MockItem>();
+            var pool = new PipelinedPool<MockItem>(() =>
+            {
+                var result = new MockItem();
+                items.Add(result);
+                return TaskPort.FromResult(result);
+            }, item => item.IsValid);
+
+            using (var item = await pool.Borrow())
+            {
+                item.Item.IsValid = false;
+            }
+
+            Assert.AreEqual(1, items.Count);
+            Assert.AreEqual(1, items.First().DisposeCount);
+
+            using (var item = await pool.Borrow())
+            {
+                item.Item.IsValid = true;
+            }
+
+            Assert.AreEqual(2, items.Count);
+            Assert.AreEqual(1, items[0].DisposeCount);
+            Assert.AreEqual(0, items[1].DisposeCount);
+
+            using (var item = await pool.Borrow())
+            {
+                Assert.AreSame(items[1], item.Item);
+            }
+
+            Assert.AreEqual(2, items.Count);
+            Assert.AreEqual(1, items[0].DisposeCount);
+            Assert.AreEqual(0, items[1].DisposeCount);
+        }
+
+        private class MockItem : IDisposable
+        {
+            static int _nextId;
+            int _id;
+
+            public MockItem()
+            {
+                _id = Interlocked.Increment(ref _nextId);
+                IsValid = true;
+            }
+
+            public int Id
+            {
+                get { return _id; }
+            }
+
+            public bool IsValid { get; set; }
+
+            public int DisposeCount { get; set; }
+
+            public void Dispose()
+            {
+                DisposeCount++;
+            }
         }
     }
 }
