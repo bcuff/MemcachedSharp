@@ -2,11 +2,11 @@
 
 namespace MemcachedSharp.Commands
 {
-    internal class SetCommand : StorageCommand
+    internal class CasCommand : StorageCommand
     {
         public override string Verb
         {
-            get { return "set"; }
+            get { return "cas"; }
         }
     }
 }

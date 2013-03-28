@@ -86,7 +86,15 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Commands\AddCommandTest.cs" />
+    <Compile Include="Commands\AppendCommandTest.cs" />
+    <Compile Include="Commands\CasCommandTest.cs" />
+    <Compile Include="Commands\PrependCommandTest.cs" />
+    <Compile Include="Commands\ReplaceCommandTest.cs" />
+    <Compile Include="Commands\SetCommandTest.cs" />
+    <Compile Include="Commands\StorageCommandValidator.cs" />
     <Compile Include="MemcachedResponseReaderTest.cs" />
+    <Compile Include="MockSocket.cs" />
     <Compile Include="Pooling\PipelinedPoolTest.cs" />
     <Compile Include="Pooling\PoolTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

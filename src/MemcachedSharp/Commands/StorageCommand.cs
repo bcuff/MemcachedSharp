@@ -1,14 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace MemcachedSharp.Commands
 {
-    abstract class StorageCommand<T> : SingleKeyCommand<T>
+    abstract class StorageCommand : SingleKeyCommand<StorageCommandResult>
     {
         static readonly byte[] _endLineBuffer = Encoding.UTF8.GetBytes("\r\n");
+        static readonly Dictionary<string, StorageCommandResult> _storageResults = new Dictionary<string, StorageCommandResult>
+        {
+            { "STORED", StorageCommandResult.Stored },
+            { "NOT_STORED", StorageCommandResult.NotStored },
+            { "EXISTS", StorageCommandResult.Exists },
+            { "NOT_FOUND", StorageCommandResult.NotFound },
+        };
 
         public MemcachedStorageOptions Options { get; set; }
         public ArraySegment<byte> Data { get; set; }
@@ -35,6 +41,15 @@ namespace MemcachedSharp.Commands
             });
         }
 
-        public abstract override Task<T> ReadResponse(IResponseReader reader);
+        public override async Task<StorageCommandResult> ReadResponse(IResponseReader reader)
+        {
+            var line = await reader.ReadLine();
+            StorageCommandResult result;
+            if (_storageResults.TryGetValue(line.Parts[0], out result))
+            {
+                return result;
+            }
+            throw Util.CreateUnexpectedResponseLine(line.Line);
+        }
     }
 }

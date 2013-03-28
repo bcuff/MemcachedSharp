@@ -1,12 +1,13 @@
 ﻿using System;
+using System.Linq;
 
 namespace MemcachedSharp.Commands
 {
-    internal class SetCommand : StorageCommand
+    internal class ReplaceCommand : StorageCommand
     {
         public override string Verb
         {
-            get { return "set"; }
+            get { return "replace"; }
         }
     }
 }
