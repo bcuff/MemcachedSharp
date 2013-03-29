@@ -84,9 +84,11 @@
     <Compile Include="Commands\CasCommand.cs" />
     <Compile Include="Commands\DeleteCommand.cs" />
     <Compile Include="Commands\GetCommand.cs" />
+    <Compile Include="Commands\GetsCommand.cs" />
     <Compile Include="Commands\ICommand.cs" />
     <Compile Include="Commands\PrependCommand.cs" />
     <Compile Include="Commands\ReplaceCommand.cs" />
+    <Compile Include="Commands\RetrievalCommand.cs" />
     <Compile Include="Commands\SetCommand.cs" />
     <Compile Include="Commands\SingleKeyCommand.cs" />
     <Compile Include="Commands\StorageCommand.cs" />

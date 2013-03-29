@@ -88,7 +88,7 @@ namespace MemcachedSharp
         }
 
         /// <summary>
-        /// Gets a <c>MemcachedItem</c> from Memcached with the specified <paramref name="key"/>.
+        /// Gets a <c>MemcachedItem</c> from Memcached with the specified <paramref name="key"/>. Doesn't include the <see cref="MemcachedItem.CasUnique"/> field.
         /// </summary>
         /// <param name="key">The key of the item to get. Must be between 1 and 250 characters and may not contain whitespace or control characters.</param>
         /// <returns>
@@ -98,6 +98,19 @@ namespace MemcachedSharp
         {
             Util.ValidateKey(key);
             return Execute(new GetCommand { Key = key, });
+        }
+
+        /// <summary>
+        /// Gets a <c>MemcachedItem</c> from Memcached with the specified <paramref name="key"/>. Includes the <see cref="MemcachedItem.CasUnique"/> field.
+        /// </summary>
+        /// <param name="key">The key of the item to get. Must be between 1 and 250 characters and may not contain whitespace or control characters.</param>
+        /// <returns>
+        /// A task containing a <c>MemcachedItem</c> that encapsulates the response and data if found; otherwise <c>null</c>.
+        /// </returns>
+        public Task<MemcachedItem> Gets(string key)
+        {
+            Util.ValidateKey(key);
+            return Execute(new GetsCommand { Key = key, });
         }
 
         /// <summary>

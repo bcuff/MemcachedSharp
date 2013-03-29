@@ -20,7 +20,7 @@ namespace MemcachedSharp.Test.Commands
             random.NextBytes(buffer);
             yield return new T
             {
-                Key = "1234567890-=~!@#$%^&*()_+",
+                Key = "1234567890-=~!@#$%^&*()_+ひらがな",
                 Data = new ArraySegment<byte>(buffer),
             };
             yield return new T
@@ -34,7 +34,7 @@ namespace MemcachedSharp.Test.Commands
             };
             yield return new T
             {
-                Key = "1234567890-=~!@#$%^&*()_+0aweawefa;jk",
+                Key = "1234567890-=~!@#$%^&*()_+0aweawefa;jk{}[]`12345678900-=~!@#$%^&*().,/*-\\?~:\";'",
                 Data = new ArraySegment<byte>(buffer, 21, 1 << 10 + 1),
                 Options = new MemcachedStorageOptions
                 {
@@ -52,7 +52,7 @@ namespace MemcachedSharp.Test.Commands
             using (var stream = mockSocket.GetSentData())
             {
                 // validate the command line
-                var commandLine = ReadLine(stream);
+                var commandLine = stream.ReadLine();
                 Assert.IsNotNull(commandLine);
                 var parts = commandLine.Split(' ');
                 Assert.AreEqual(5, parts.Length);
@@ -86,45 +86,6 @@ namespace MemcachedSharp.Test.Commands
                 Assert.AreEqual('\n', stream.ReadByte());
                 Assert.AreEqual(-1, stream.ReadByte());
             }
-        }
-
-        private static string ReadLine(Stream stream, Encoding encoding = null)
-        {
-            encoding = encoding ?? Encoding.UTF8;
-            var result = new StringBuilder();
-            var decoder = encoding.GetDecoder();
-            while (true)
-            {
-                var val = ReadMinimum(stream, decoder);
-                if (val == null) throw new EndOfStreamException();
-                if (val == "\n") return result.ToString();
-                if (val != "\r")
-                {
-                    result.Append(val);
-                }
-            }
-        }
-
-        private static string ReadMinimum(Stream stream, Decoder decoder)
-        {
-            var buffer = new byte[16];
-            for (int i = 0; i < buffer.Length; ++i)
-            {
-                var read = stream.Read(buffer, i, 1);
-                if (read == 0)
-                {
-                    if (i != 0) throw new Exception("invalid encoded text?");
-                    return null;
-                }
-                var charCount = decoder.GetCharCount(buffer, 0, i + 1);
-                if (charCount != 0)
-                {
-                    var chars = new char[charCount];
-                    decoder.GetChars(buffer, 0, i + 1, chars, 0);
-                    return new string(chars);
-                }
-            }
-            throw new Exception("impossible?");
         }
     }
 }

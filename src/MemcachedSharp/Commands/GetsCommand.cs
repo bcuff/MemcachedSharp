@@ -2,11 +2,11 @@
 
 namespace MemcachedSharp.Commands
 {
-    internal class GetCommand : RetrievalCommand
+    internal class GetsCommand : RetrievalCommand
     {
         public override string Verb
         {
-            get { return "get"; }
+            get { return "gets"; }
         }
     }
 }
