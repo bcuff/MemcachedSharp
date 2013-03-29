@@ -88,9 +88,12 @@
   <ItemGroup>
     <Compile Include="Commands\AddCommandTest.cs" />
     <Compile Include="Commands\AppendCommandTest.cs" />
+    <Compile Include="Commands\ArithmeticalCommandValidator.cs" />
     <Compile Include="Commands\CasCommandTest.cs" />
+    <Compile Include="Commands\DecrementCommandTest.cs" />
     <Compile Include="Commands\GetCommandTest.cs" />
     <Compile Include="Commands\GetsCommandTest.cs" />
+    <Compile Include="Commands\IncrementCommandTest.cs" />
     <Compile Include="Commands\PrependCommandTest.cs" />
     <Compile Include="Commands\ReplaceCommandTest.cs" />
     <Compile Include="Commands\RetrievalCommandValidator.cs" />

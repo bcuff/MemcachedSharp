@@ -36,9 +36,10 @@ namespace MemcachedSharp
             }
         }
 
-        public static MemcachedException CreateUnexpectedResponseLine(string responseLine)
+        public static MemcachedException CreateUnexpectedResponseLine(ICommand command, string responseLine)
         {
-            return new MemcachedException("Unexpected response line - " + responseLine);
+            var message = string.Format("Unexpected response from '{0}' command; responseLine={1}", command.Verb, responseLine);
+            return new MemcachedException(message);
         }
     }
 }

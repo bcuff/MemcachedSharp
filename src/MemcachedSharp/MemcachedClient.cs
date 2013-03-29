@@ -299,6 +299,30 @@ namespace MemcachedSharp
         }
 
         /// <summary>
+        /// Increments a counter value in Memcached by the specified <paramref name="value"/> or returns <c>null</c> if the counter value doesn't already exist.
+        /// </summary>
+        /// <param name="key">The key of the item to increment. Must be between 1 and 250 characters and may not contain whitespace or control characters.</param>
+        /// <param name="value">The amount to increment by.</param>
+        /// <returns>A task that completes with the value of the counter after the increment, or <c>null</c> if no value exists with that key, or a task that completes unsuccessfully otherwise.</returns>
+        public Task<ulong?> Increment(string key, ulong value)
+        {
+            Util.ValidateKey(key);
+            return Execute(new IncrementCommand { Key = key, Value = value });
+        }
+
+        /// <summary>
+        /// Decrements a counter value in Memcached by the specified <paramref name="value"/> or returns <c>null</c> if the counter value doesn't already exist.
+        /// </summary>
+        /// <param name="key">The key of the item to decrement. Must be between 1 and 250 characters and may not contain whitespace or control characters.</param>
+        /// <param name="value">The amount to decrement by.</param>
+        /// <returns>A task that completes with the value of the counter after the decrement, or <c>null</c> if no value exists with that key, or a task that completes unsuccessfully otherwise.</returns>
+        public Task<ulong?> Decrement(string key, ulong value)
+        {
+            Util.ValidateKey(key);
+            return Execute(new DecrementCommand { Key = key, Value = value });
+        }
+
+        /// <summary>
         /// Deletes a value with the specified <paramref name="key"/> from Memcached.
         /// </summary>
         /// <param name="key">The key of the item to delete. Must be between 1 and 250 characters and may not contain whitespace or control characters.</param>

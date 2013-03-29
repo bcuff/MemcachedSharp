@@ -8,8 +8,6 @@ namespace MemcachedSharp.Commands
 {
     abstract class RetrievalCommand : SingleKeyCommand<MemcachedItem>
     {
-        public abstract string Verb { get; }
-
         public override Task SendRequest(ISocket socket)
         {
             var line = string.Format("{0} {1}\r\n", Verb, Key).ToUtf8();

@@ -18,7 +18,6 @@ namespace MemcachedSharp.Commands
 
         public MemcachedStorageOptions Options { get; set; }
         public ArraySegment<byte> Data { get; set; }
-        public abstract string Verb { get; }
 
         public sealed override Task SendRequest(ISocket socket)
         {
@@ -45,20 +44,13 @@ namespace MemcachedSharp.Commands
         {
             var line = await reader.ReadLine();
             StorageCommandResult result;
-            if (_storageResults.TryGetValue(line.Parts[0], out result))
+            if (_storageResults.TryGetValue(line.Parts[0], out result) && IsResultValid(result))
             {
-                ValidateResponse(result, line.Line);
                 return result;
             }
-            throw Util.CreateUnexpectedResponseLine(line.Line);
+            throw Util.CreateUnexpectedResponseLine(this, line.Line);
         }
 
-        protected abstract void ValidateResponse(StorageCommandResult result, string responseLine);
-
-        protected Exception CreateUnexpectedResponse(string responseLine)
-        {
-            var message = string.Format("Unexpected response from {0} command; responseLine={1}", Verb, responseLine);
-            return new MemcachedException(message);
-        }
+        protected abstract bool IsResultValid(StorageCommandResult result);
     }
 }

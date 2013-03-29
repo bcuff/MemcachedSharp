@@ -9,17 +9,11 @@ namespace MemcachedSharp.Commands
             get { return "cas"; }
         }
 
-        protected override void ValidateResponse(StorageCommandResult result, string responseLine)
+        protected override bool IsResultValid(StorageCommandResult result)
         {
-            switch (result)
-            {
-                case StorageCommandResult.Stored:
-                case StorageCommandResult.Exists:
-                case StorageCommandResult.NotFound:
-                    break;
-                default:
-                    throw CreateUnexpectedResponse(responseLine);
-            }
+            return result == StorageCommandResult.Stored
+                || result == StorageCommandResult.Exists
+                || result == StorageCommandResult.NotFound;
         }
     }
 }

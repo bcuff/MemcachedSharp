@@ -9,12 +9,9 @@ namespace MemcachedSharp.Commands
             get { return "prepend"; }
         }
 
-        protected override void ValidateResponse(StorageCommandResult result, string responseLine)
+        protected override bool IsResultValid(StorageCommandResult result)
         {
-            if (result != StorageCommandResult.Stored && result != StorageCommandResult.NotStored)
-            {
-                throw CreateUnexpectedResponse(responseLine);
-            }
+            return result == StorageCommandResult.Stored || result == StorageCommandResult.NotStored;
         }
     }
 }
