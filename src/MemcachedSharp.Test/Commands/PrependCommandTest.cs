@@ -14,10 +14,7 @@ namespace MemcachedSharp.Test.Commands
         [TestMethod]
         public async Task TestSendRequest()
         {
-            foreach (var command in StorageCommandValidator.GenerateTestCommands<PrependCommand>())
-            {
-                await StorageCommandValidator.TestSendBehavior(command);
-            }
+            await StorageCommandValidator.TestSendBehavior<PrependCommand>("prepend");
         }
     }
 }

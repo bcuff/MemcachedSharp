@@ -215,6 +215,78 @@ namespace MemcachedSharp
             return result == StorageCommandResult.Stored;
         }
 
+        /// <summary>
+        /// Appends the specified <paramref name="value"/> to an object in Memcached if the object exists for the given <paramref name="key"/>.
+        /// </summary>
+        /// <param name="key">The key of the item to append to. Must be between 1 and 250 characters and may not contain whitespace or control characters.</param>
+        /// <param name="value">A <c>byte</c>[] containing the data to be stored in Memcached.</param>
+        /// <param name="options">Optional options to pass to Memcached.</param>
+        /// <returns>A task that completes with <c>true</c> if the item existed and was appended, <c>false</c> if no item existed for that key, or completes unsuccessfully otherwise.</returns>
+        public Task<bool> Append(string key, byte[] value, MemcachedStorageOptions options = null)
+        {
+            Util.ValidateKey(key);
+            if (value == null) throw new ArgumentNullException("value");
+            return InternalAppend(key, value, 0, value.Length, options);
+        }
+
+        /// <summary>
+        /// Appends the specified data to an object in Memcached if the object exists for the given <paramref name="key"/>.
+        /// </summary>
+        /// <param name="key">The key of the item to append to. Must be between 1 and 250 characters and may not contain whitespace or control characters.</param>
+        /// <param name="buffer">A <c>byte</c>[] containing the data to be stored in Memcached.</param>
+        /// <param name="offset">The point in <paramref name="buffer"/> at which the data to store begins.</param>
+        /// <param name="count">The number of bytes in <paramref name="buffer"/> to store.</param>
+        /// <param name="options">Optional options to pass to Memcached.</param>
+        /// <returns>A task that completes with <c>true</c> if the item existed and was appended, <c>false</c> if no item existed for that key, or completes unsuccessfully otherwise.</returns>
+        public Task<bool> Append(string key, byte[] buffer, int offset, int count, MemcachedStorageOptions options = null)
+        {
+            Util.ValidateKey(key);
+            Util.ValidateBuffer(buffer, offset, count);
+            return InternalAppend(key, buffer, offset, count, options);
+        }
+
+        private async Task<bool> InternalAppend(string key, byte[] buffer, int offset, int count, MemcachedStorageOptions options)
+        {
+            var result = await ExecuteStoreCommand<AppendCommand>(key, buffer, offset, count, options);
+            return result == StorageCommandResult.Stored;
+        }
+
+        /// <summary>
+        /// Prepends the specified <paramref name="value"/> to an object in Memcached if the object exists for the given <paramref name="key"/>.
+        /// </summary>
+        /// <param name="key">The key of the item to prepend to. Must be between 1 and 250 characters and may not contain whitespace or control characters.</param>
+        /// <param name="value">A <c>byte</c>[] containing the data to be stored in Memcached.</param>
+        /// <param name="options">Optional options to pass to Memcached.</param>
+        /// <returns>A task that completes with <c>true</c> if the item existed and was prepended, <c>false</c> if no item existed for that key, or completes unsuccessfully otherwise.</returns>
+        public Task<bool> Prepend(string key, byte[] value, MemcachedStorageOptions options = null)
+        {
+            Util.ValidateKey(key);
+            if (value == null) throw new ArgumentNullException("value");
+            return InternalPrepend(key, value, 0, value.Length, options);
+        }
+
+        /// <summary>
+        /// Prepends the specified data to an object in Memcached if the object exists for the given <paramref name="key"/>.
+        /// </summary>
+        /// <param name="key">The key of the item to prepend to. Must be between 1 and 250 characters and may not contain whitespace or control characters.</param>
+        /// <param name="buffer">A <c>byte</c>[] containing the data to be stored in Memcached.</param>
+        /// <param name="offset">The point in <paramref name="buffer"/> at which the data to store begins.</param>
+        /// <param name="count">The number of bytes in <paramref name="buffer"/> to store.</param>
+        /// <param name="options">Optional options to pass to Memcached.</param>
+        /// <returns>A task that completes with <c>true</c> if the item existed and was prepended, <c>false</c> if no item existed for that key, or completes unsuccessfully otherwise.</returns>
+        public Task<bool> Prepend(string key, byte[] buffer, int offset, int count, MemcachedStorageOptions options = null)
+        {
+            Util.ValidateKey(key);
+            Util.ValidateBuffer(buffer, offset, count);
+            return InternalPrepend(key, buffer, offset, count, options);
+        }
+
+        private async Task<bool> InternalPrepend(string key, byte[] buffer, int offset, int count, MemcachedStorageOptions options)
+        {
+            var result = await ExecuteStoreCommand<PrependCommand>(key, buffer, offset, count, options);
+            return result == StorageCommandResult.Stored;
+        }
+
         private Task<StorageCommandResult> ExecuteStoreCommand<T>(string key, byte[] buffer, int offset, int count, MemcachedStorageOptions options)
             where T : StorageCommand, new()
         {

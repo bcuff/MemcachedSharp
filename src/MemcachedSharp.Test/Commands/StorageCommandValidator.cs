@@ -44,7 +44,16 @@ namespace MemcachedSharp.Test.Commands
             };
         }
 
-        public static async Task TestSendBehavior(StorageCommand command)
+        public static async Task TestSendBehavior<T>(string expectedVerb)
+            where T : StorageCommand, new()
+        {
+            foreach (var command in GenerateTestCommands<T>())
+            {
+                await TestSendBehavior(expectedVerb, command);
+            }
+        }
+
+        public static async Task TestSendBehavior(string expectedVerb, StorageCommand command)
         {
             var mockSocket = new MockSocket();
             await command.SendRequest(mockSocket);
