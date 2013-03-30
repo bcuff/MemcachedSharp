@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MemcachedSharp.Commands
 {
-    abstract class StorageCommand : SingleKeyCommand<StorageCommandResult>
+    abstract class StorageCommand<T> : SingleKeyCommand<T>
     {
         static readonly byte[] _endLineBuffer = Encoding.UTF8.GetBytes("\r\n");
         static readonly Dictionary<string, StorageCommandResult> _storageResults = new Dictionary<string, StorageCommandResult>
@@ -40,17 +40,18 @@ namespace MemcachedSharp.Commands
             });
         }
 
-        public override sealed async Task<StorageCommandResult> ReadResponse(IResponseReader reader)
+        public override sealed async Task<T> ReadResponse(IResponseReader reader)
         {
             var line = await reader.ReadLine();
             StorageCommandResult result;
-            if (_storageResults.TryGetValue(line.Parts[0], out result) && IsResultValid(result))
+            T actualResult;
+            if (_storageResults.TryGetValue(line.Parts[0], out result) && TryConvertResult(result, out actualResult))
             {
-                return result;
+                return actualResult;
             }
             throw Util.CreateUnexpectedResponseLine(this, line.Line);
         }
 
-        protected abstract bool IsResultValid(StorageCommandResult result);
+        protected abstract bool TryConvertResult(StorageCommandResult storageResult, out T actualResult);
     }
 }

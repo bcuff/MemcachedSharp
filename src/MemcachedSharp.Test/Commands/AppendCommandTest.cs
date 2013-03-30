@@ -14,7 +14,7 @@ namespace MemcachedSharp.Test.Commands
         [TestMethod]
         public async Task TestSendRequest()
         {
-            await StorageCommandValidator.TestSendBehavior<AppendCommand>("append");
+            await StorageCommandValidator.TestSendBehavior<AppendCommand, bool>("append");
         }
     }
 }

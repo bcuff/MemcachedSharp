@@ -12,18 +12,18 @@ namespace MemcachedSharp.Test.Commands
 {
     internal static class StorageCommandValidator
     {
-        public static IEnumerable<T> GenerateTestCommands<T>()
-            where T : StorageCommand, new()
+        public static IEnumerable<TCommand> GenerateTestCommands<TCommand, TResult>()
+            where TCommand : StorageCommand<TResult>, new()
         {
             var random = new Random(Guid.NewGuid().GetHashCode());
             var buffer = new byte[random.Next() % (5 << 10) + (2 << 10)];
             random.NextBytes(buffer);
-            yield return new T
+            yield return new TCommand
             {
                 Key = "1234567890-=~!@#$%^&*()_+ひらがな",
                 Data = new ArraySegment<byte>(buffer),
             };
-            yield return new T
+            yield return new TCommand
             {
                 Key = "1234567890-=~!@#$%^&*()_+0aweawefa;jk",
                 Data = new ArraySegment<byte>(buffer, 21, 1 << 10 + 1),
@@ -32,7 +32,7 @@ namespace MemcachedSharp.Test.Commands
                     Flags = 123,
                 }
             };
-            yield return new T
+            yield return new TCommand
             {
                 Key = "1234567890-=~!@#$%^&*()_+0aweawefa;jk{}[]`12345678900-=~!@#$%^&*().,/*-\\?~:\";'",
                 Data = new ArraySegment<byte>(buffer, 21, 1 << 10 + 1),
@@ -44,16 +44,16 @@ namespace MemcachedSharp.Test.Commands
             };
         }
 
-        public static async Task TestSendBehavior<T>(string expectedVerb)
-            where T : StorageCommand, new()
+        public static async Task TestSendBehavior<TCommand, TResult>(string expectedVerb)
+            where TCommand : StorageCommand<TResult>, new()
         {
-            foreach (var command in GenerateTestCommands<T>())
+            foreach (var command in GenerateTestCommands<TCommand, TResult>())
             {
                 await TestSendBehavior(expectedVerb, command);
             }
         }
 
-        public static async Task TestSendBehavior(string expectedVerb, StorageCommand command)
+        public static async Task TestSendBehavior<T>(string expectedVerb, StorageCommand<T> command)
         {
             var mockSocket = new MockSocket();
             await command.SendRequest(mockSocket);

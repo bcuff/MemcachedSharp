@@ -124,7 +124,7 @@ namespace MemcachedSharp
         {
             Util.ValidateKey(key);
             if (value == null) throw new ArgumentNullException("value");
-            return ExecuteStoreCommand<SetCommand>(key, value, 0, value.Length, options);
+            return ExecuteStoreCommand<SetCommand, bool>(key, value, 0, value.Length, options);
         }
 
         /// <summary>
@@ -140,7 +140,7 @@ namespace MemcachedSharp
         {
             Util.ValidateKey(key);
             Util.ValidateBuffer(buffer, offset, count);
-            return ExecuteStoreCommand<SetCommand>(key, buffer, offset, count, options);
+            return ExecuteStoreCommand<SetCommand, bool>(key, buffer, offset, count, options);
         }
 
         /// <summary>
@@ -154,7 +154,7 @@ namespace MemcachedSharp
         {
             Util.ValidateKey(key);
             if (value == null) throw new ArgumentNullException("value");
-            return InternalAdd(key, value, 0, value.Length, options);
+            return ExecuteStoreCommand<AddCommand, bool>(key, value, 0, value.Length, options);
         }
 
         /// <summary>
@@ -170,13 +170,7 @@ namespace MemcachedSharp
         {
             Util.ValidateKey(key);
             Util.ValidateBuffer(buffer, offset, count);
-            return InternalAdd(key, buffer, offset, count, options);
-        }
-
-        private async Task<bool> InternalAdd(string key, byte[] buffer, int offset, int count, MemcachedStorageOptions options)
-        {
-            var result = await ExecuteStoreCommand<AddCommand>(key, buffer, offset, count, options);
-            return result == StorageCommandResult.Stored;
+            return ExecuteStoreCommand<AddCommand, bool>(key, buffer, offset, count, options);
         }
 
         /// <summary>
@@ -190,7 +184,7 @@ namespace MemcachedSharp
         {
             Util.ValidateKey(key);
             if (value == null) throw new ArgumentNullException("value");
-            return InternalReplace(key, value, 0, value.Length, options);
+            return ExecuteStoreCommand<ReplaceCommand, bool>(key, value, 0, value.Length, options);
         }
 
         /// <summary>
@@ -206,13 +200,7 @@ namespace MemcachedSharp
         {
             Util.ValidateKey(key);
             Util.ValidateBuffer(buffer, offset, count);
-            return InternalReplace(key, buffer, offset, count, options);
-        }
-
-        private async Task<bool> InternalReplace(string key, byte[] buffer, int offset, int count, MemcachedStorageOptions options)
-        {
-            var result = await ExecuteStoreCommand<ReplaceCommand>(key, buffer, offset, count, options);
-            return result == StorageCommandResult.Stored;
+            return ExecuteStoreCommand<ReplaceCommand, bool>(key, buffer, offset, count, options);
         }
 
         /// <summary>
@@ -226,7 +214,7 @@ namespace MemcachedSharp
         {
             Util.ValidateKey(key);
             if (value == null) throw new ArgumentNullException("value");
-            return InternalAppend(key, value, 0, value.Length, options);
+            return ExecuteStoreCommand<AppendCommand, bool>(key, value, 0, value.Length, options);
         }
 
         /// <summary>
@@ -242,13 +230,7 @@ namespace MemcachedSharp
         {
             Util.ValidateKey(key);
             Util.ValidateBuffer(buffer, offset, count);
-            return InternalAppend(key, buffer, offset, count, options);
-        }
-
-        private async Task<bool> InternalAppend(string key, byte[] buffer, int offset, int count, MemcachedStorageOptions options)
-        {
-            var result = await ExecuteStoreCommand<AppendCommand>(key, buffer, offset, count, options);
-            return result == StorageCommandResult.Stored;
+            return ExecuteStoreCommand<AppendCommand, bool>(key, buffer, offset, count, options);
         }
 
         /// <summary>
@@ -262,7 +244,7 @@ namespace MemcachedSharp
         {
             Util.ValidateKey(key);
             if (value == null) throw new ArgumentNullException("value");
-            return InternalPrepend(key, value, 0, value.Length, options);
+            return ExecuteStoreCommand<PrependCommand, bool>(key, value, 0, value.Length, options);
         }
 
         /// <summary>
@@ -278,19 +260,13 @@ namespace MemcachedSharp
         {
             Util.ValidateKey(key);
             Util.ValidateBuffer(buffer, offset, count);
-            return InternalPrepend(key, buffer, offset, count, options);
+            return ExecuteStoreCommand<PrependCommand, bool>(key, buffer, offset, count, options);
         }
 
-        private async Task<bool> InternalPrepend(string key, byte[] buffer, int offset, int count, MemcachedStorageOptions options)
+        private Task<TResult> ExecuteStoreCommand<TCommand, TResult>(string key, byte[] buffer, int offset, int count, MemcachedStorageOptions options)
+            where TCommand : StorageCommand<TResult>, new()
         {
-            var result = await ExecuteStoreCommand<PrependCommand>(key, buffer, offset, count, options);
-            return result == StorageCommandResult.Stored;
-        }
-
-        private Task<StorageCommandResult> ExecuteStoreCommand<T>(string key, byte[] buffer, int offset, int count, MemcachedStorageOptions options)
-            where T : StorageCommand, new()
-        {
-            return Execute(new T
+            return Execute(new TCommand
             {
                 Key = key,
                 Data = new ArraySegment<byte>(buffer, offset, count),
@@ -320,6 +296,42 @@ namespace MemcachedSharp
         {
             Util.ValidateKey(key);
             return Execute(new DecrementCommand { Key = key, Value = value });
+        }
+
+        /// <summary>
+        /// Stores the specified <paramref name="value"/> in Memcached if the object exists and the specified <paramref name="casUnique"/> flag matches the value in Memcached.
+        /// </summary>
+        /// <param name="key">The key of the item to store. Must be between 1 and 250 characters and may not contain whitespace or control characters.</param>
+        /// <param name="casUnique">The cas unique value of the object previously retrieved from Memcached via <see cref="Gets"/>. See <see cref="MemcachedItem.CasUnique"/>.</param>
+        /// <param name="value">A <c>byte</c>[] containing the data to be stored in Memcached if the compare succeeds.</param>
+        /// <param name="options">Optional options to pass to Memcached.</param>
+        /// <returns>
+        ///     <para>A task that completes successfully with a <see cref="CasResult"/> or faults in the event of a failure.</para>
+        /// </returns>
+        public Task<CasResult> Cas(string key, long casUnique, byte[] value, MemcachedStorageOptions options = null)
+        {
+            Util.ValidateKey(key);
+            if (value == null) throw new ArgumentNullException("value");
+            return ExecuteStoreCommand<CasCommand, CasResult>(key, value, 0, value.Length, options);
+        }
+
+        /// <summary>
+        /// Stores the specified data in Memcached if the object exists and the specified <paramref name="casUnique"/> flag matches the value in Memcached.
+        /// </summary>
+        /// <param name="key">The key of the item to store. Must be between 1 and 250 characters and may not contain whitespace or control characters.</param>
+        /// <param name="casUnique">The cas unique value of the object previously retrieved from Memcached via <see cref="Gets"/>. See <see cref="MemcachedItem.CasUnique"/>.</param>
+        /// <param name="buffer">A <c>byte</c>[] containing the data to be stored in Memcached if the compare succeeds.</param>
+        /// <param name="offset">The point in <paramref name="buffer"/> at which the data to store begins.</param>
+        /// <param name="count">The number of bytes in <paramref name="buffer"/> to store.</param>
+        /// <param name="options">Optional options to pass to Memcached.</param>
+        /// <returns>
+        ///     <para>A task that completes successfully with a <see cref="CasResult"/> or faults in the event of a failure.</para>
+        /// </returns>
+        public Task<CasResult> Cas(string key, long casUnique, byte[] buffer, int offset, int count, MemcachedStorageOptions options = null)
+        {
+            Util.ValidateKey(key);
+            Util.ValidateBuffer(buffer, offset, count);
+            return ExecuteStoreCommand<CasCommand, CasResult>(key, buffer, offset, count, options);
         }
 
         /// <summary>

@@ -2,18 +2,22 @@
 
 namespace MemcachedSharp.Commands
 {
-    internal class CasCommand : StorageCommand
+    internal class CasCommand : StorageCommand<CasResult>
     {
         public override string Verb
         {
             get { return "cas"; }
         }
 
-        protected override bool IsResultValid(StorageCommandResult result)
+        protected override bool TryConvertResult(StorageCommandResult storageResult, out CasResult actualResult)
         {
-            return result == StorageCommandResult.Stored
-                || result == StorageCommandResult.Exists
-                || result == StorageCommandResult.NotFound;
+            switch(storageResult)
+            {
+                case StorageCommandResult.Stored: actualResult = CasResult.Stored; return true;
+                case StorageCommandResult.Exists: actualResult = CasResult.Exists; return true;
+                case StorageCommandResult.NotFound: actualResult = CasResult.NotFound; return true;
+                default: actualResult = default(CasResult); return false;
+            }
         }
     }
 }

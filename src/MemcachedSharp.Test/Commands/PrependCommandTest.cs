@@ -14,7 +14,7 @@ namespace MemcachedSharp.Test.Commands
         [TestMethod]
         public async Task TestSendRequest()
         {
-            await StorageCommandValidator.TestSendBehavior<PrependCommand>("prepend");
+            await StorageCommandValidator.TestSendBehavior<PrependCommand, bool>("prepend");
         }
     }
 }

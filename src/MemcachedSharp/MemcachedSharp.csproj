@@ -96,6 +96,7 @@
     <Compile Include="Commands\SingleKeyCommand.cs" />
     <Compile Include="Commands\StorageCommand.cs" />
     <Compile Include="Commands\StorageCommandResult.cs" />
+    <Compile Include="CompareAndSwapResult.cs" />
     <Compile Include="DnsExtensions.cs" />
     <Compile Include="Pooling\IPool.cs" />
     <Compile Include="Pooling\IPooledItem.cs" />
