@@ -3,6 +3,10 @@ MemcachedSharp
 
 A light-weight, async/non-blocking Memcached client for .NET
 
+#Install on NuGet
+
+> Install-Package MemcachedSharp
+
 #Example
 
 ```c#
