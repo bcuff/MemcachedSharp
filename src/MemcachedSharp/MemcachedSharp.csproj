@@ -96,6 +96,7 @@
     <Compile Include="Commands\SingleKeyCommand.cs" />
     <Compile Include="Commands\StorageCommand.cs" />
     <Compile Include="Commands\StorageCommandResult.cs" />
+    <Compile Include="Commands\TouchCommand.cs" />
     <Compile Include="CompareAndSwapResult.cs" />
     <Compile Include="DnsExtensions.cs" />
     <Compile Include="Pooling\IPool.cs" />
@@ -128,6 +129,7 @@
     <None Include="key.snk" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
