@@ -8,7 +8,7 @@ namespace MemcachedSharp
     public enum CasResult
     {
         /// <summary>
-        /// The item was stored becaues the specified cas unique field matched the one in Memcached.
+        /// The item was stored because the specified cas unique field matched the one in Memcached.
         /// </summary>
         Stored,
         /// <summary>
