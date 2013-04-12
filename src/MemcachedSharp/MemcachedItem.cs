@@ -9,7 +9,7 @@ namespace MemcachedSharp
     /// <summary>
     /// Encapsulates a response object from Memcached.
     /// </summary>
-    public class MemcachedItem
+    public sealed class MemcachedItem
     {
         internal MemcachedItem(string key, uint flags, long size, long? casUnique, MemoryStream data)
         {

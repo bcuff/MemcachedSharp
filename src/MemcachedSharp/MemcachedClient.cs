@@ -15,7 +15,7 @@ namespace MemcachedSharp
     /// Instances are stateful and internally pool connections to the specified host.
     /// Instances of this class ought to be disposed when they are no longer needed.
     /// </remarks>
-    public class MemcachedClient : IDisposable
+    public sealed class MemcachedClient : IDisposable
     {
         readonly int _port;
         readonly string _host;

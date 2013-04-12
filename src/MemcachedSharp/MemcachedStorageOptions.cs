@@ -6,7 +6,7 @@ namespace MemcachedSharp
     /// <summary>
     /// Encapsulates options for storage operations in Memcached.
     /// </summary>
-    public class MemcachedStorageOptions
+    public sealed class MemcachedStorageOptions
     {
         /// <summary>
         /// Gets or sets the flags field on the object to store in Memcached.

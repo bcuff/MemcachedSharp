@@ -8,7 +8,7 @@ namespace MemcachedSharp
     /// <summary>
     /// Encapsulates options for <see cref="MemcachedClient"/>.
     /// </summary>
-    public class MemcachedOptions
+    public sealed class MemcachedOptions
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="MemcachedOptions"/> class.
