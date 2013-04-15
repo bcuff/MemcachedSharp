@@ -8,6 +8,40 @@ namespace MemcachedSharp
 {
     internal static class Util
     {
+        static readonly Dictionary<string, StorageCommandResult> _storageResults = new Dictionary<string, StorageCommandResult>(4)
+        {
+            { "STORED", StorageCommandResult.Stored },
+            { "NOT_STORED", StorageCommandResult.NotStored },
+            { "EXISTS", StorageCommandResult.Exists },
+            { "NOT_FOUND", StorageCommandResult.NotFound },
+        };
+
+        static readonly Dictionary<StorageCommandResult, string> _storageResultVerbs;
+
+        static Util()
+        {
+            _storageResultVerbs = new Dictionary<StorageCommandResult, string>(_storageResults.Count);
+            foreach (var pair in _storageResults)
+            {
+                _storageResultVerbs.Add(pair.Value, pair.Key);
+            }
+        }
+
+        public static bool TryParseStorageCommandResult(string verb, out StorageCommandResult result)
+        {
+            return _storageResults.TryGetValue(verb, out result);
+        }
+
+        public static string ToVerb(this StorageCommandResult value)
+        {
+            string result;
+            if (!_storageResultVerbs.TryGetValue(value, out result))
+            {
+                throw new ArgumentException("Invalid StorageCommandResult - " + value, "value");
+            }
+            return result;
+        }
+
         public static void ValidateKey(string key)
         {
             if (key == null) throw new ArgumentNullException("key");

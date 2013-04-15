@@ -96,5 +96,37 @@ namespace MemcachedSharp.Test.Commands
                 Assert.AreEqual(-1, stream.ReadByte());
             }
         }
+
+        public static async Task AssertReadResponseFailure<TCommand, TResult>(TCommand command, StorageCommandResult result)
+            where TCommand : StorageCommand<TResult>
+        {
+            var response = Encoding.UTF8.GetBytes(result.ToVerb() + "\r\n");
+            using (var ms = new MemoryStream(response))
+            {
+                var reader = new MemcachedResponseReader(ms, Encoding.UTF8, TimeSpan.FromSeconds(2));
+                try
+                {
+                    await command.ReadResponse(reader);
+                    Assert.Fail("Response for " + result + " was expected to fail but succeeded.");
+                }
+                catch (MemcachedException mex)
+                {
+                    StringAssert.StartsWith(mex.Message, "Unexpected response");
+                    StringAssert.Contains(mex.Message, result.ToVerb());
+                }
+            }
+        }
+
+        public static async Task AssertReadResponse<TCommand, TResult>(TCommand command, StorageCommandResult result, TResult expectedResult)
+            where TCommand : StorageCommand<TResult>
+        {
+            var response = Encoding.UTF8.GetBytes(result.ToVerb() + "\r\n");
+            using (var ms = new MemoryStream(response))
+            {
+                var reader = new MemcachedResponseReader(ms, Encoding.UTF8, TimeSpan.FromSeconds(2));
+                var actualResult = await command.ReadResponse(reader);
+                Assert.AreEqual(expectedResult, actualResult);
+            }
+        }
     }
 }

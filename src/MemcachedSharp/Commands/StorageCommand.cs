@@ -8,13 +8,6 @@ namespace MemcachedSharp.Commands
     abstract class StorageCommand<T> : SingleKeyCommand<T>
     {
         static readonly byte[] _endLineBuffer = Encoding.UTF8.GetBytes("\r\n");
-        static readonly Dictionary<string, StorageCommandResult> _storageResults = new Dictionary<string, StorageCommandResult>
-        {
-            { "STORED", StorageCommandResult.Stored },
-            { "NOT_STORED", StorageCommandResult.NotStored },
-            { "EXISTS", StorageCommandResult.Exists },
-            { "NOT_FOUND", StorageCommandResult.NotFound },
-        };
 
         public MemcachedStorageOptions Options { get; set; }
         public ArraySegment<byte> Data { get; set; }
@@ -45,7 +38,7 @@ namespace MemcachedSharp.Commands
             var line = await reader.ReadLine();
             StorageCommandResult result;
             T actualResult;
-            if (_storageResults.TryGetValue(line.Parts[0], out result) && TryConvertResult(result, out actualResult))
+            if (Util.TryParseStorageCommandResult(line.Parts[0], out result) && TryConvertResult(result, out actualResult))
             {
                 return actualResult;
             }

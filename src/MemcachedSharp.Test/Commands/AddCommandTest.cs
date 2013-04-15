@@ -16,5 +16,15 @@ namespace MemcachedSharp.Test.Commands
         {
             await StorageCommandValidator.TestSendBehavior<AddCommand, bool>("add");
         }
+
+        [TestMethod]
+        public async Task ReadResponse()
+        {
+            var command = new AddCommand();
+            await StorageCommandValidator.AssertReadResponse(command, StorageCommandResult.Stored, true);
+            await StorageCommandValidator.AssertReadResponse(command, StorageCommandResult.NotStored, false);
+            await StorageCommandValidator.AssertReadResponseFailure<AddCommand, bool>(command, StorageCommandResult.NotFound);
+            await StorageCommandValidator.AssertReadResponseFailure<AddCommand, bool>(command, StorageCommandResult.Exists);
+        }
     }
 }
