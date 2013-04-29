@@ -114,6 +114,64 @@ namespace MemcachedSharp
         }
 
         /// <summary>
+        /// Gets an observable of <c>MemcachedItem</c>s with the specified <paramref name="keys"/>.
+        /// The observable is cold, meaning that the operation isn't performed until <see cref="IObservable{T}.Subscribe"/> is called.
+        /// </summary>
+        /// <param name="keys">The keys of the item to get. Each key must be between 1 and 250 characters and may not contain whitespace or control characters.</param>
+        /// <returns>
+        /// An observable of <c>MemcachedItem</c>s found in Memcached.
+        /// </returns>
+        public IObservable<MemcachedItem> GetMany(params string[] keys)
+        {
+            return GetMany((IEnumerable<string>)keys);
+        }
+
+        /// <summary>
+        /// Gets an observable of <c>MemcachedItem</c>s with the specified <paramref name="keys"/>.
+        /// The observable is cold, meaning that the operation isn't performed until <see cref="IObservable{T}.Subscribe"/> is called.
+        /// </summary>
+        /// <param name="keys">The keys of the item to get. Each key must be between 1 and 250 characters and may not contain whitespace or control characters.</param>
+        /// <returns>
+        /// An observable of <c>MemcachedItem</c>s found in Memcached.
+        /// </returns>
+        public IObservable<MemcachedItem> GetMany(IEnumerable<string> keys)
+        {
+            return new PluralRetrievalObservable(_pool, () => new PluralGetCommand
+            {
+                Keys = keys
+            });
+        }
+
+        /// <summary>
+        /// Gets an observable of <c>MemcachedItem</c>s with the specified <paramref name="keys"/>. Includes the <see cref="MemcachedItem.CasUnique"/> field.
+        /// The observable is cold, meaning that the operation isn't performed until <see cref="IObservable{T}.Subscribe"/> is called.
+        /// </summary>
+        /// <param name="keys">The keys of the item to get. Each key must be between 1 and 250 characters and may not contain whitespace or control characters.</param>
+        /// <returns>
+        /// An observable of <c>MemcachedItem</c>s found in Memcached.
+        /// </returns>
+        public IObservable<MemcachedItem> GetsMany(params string[] keys)
+        {
+            return GetsMany((IEnumerable<string>)keys);
+        }
+
+        /// <summary>
+        /// Gets an observable of <c>MemcachedItem</c>s with the specified <paramref name="keys"/>. Includes the <see cref="MemcachedItem.CasUnique"/> field.
+        /// The observable is cold, meaning that the operation isn't performed until <see cref="IObservable{T}.Subscribe"/> is called.
+        /// </summary>
+        /// <param name="keys">The keys of the item to get. Each key must be between 1 and 250 characters and may not contain whitespace or control characters.</param>
+        /// <returns>
+        /// An observable of <c>MemcachedItem</c>s found in Memcached.
+        /// </returns>
+        public IObservable<MemcachedItem> GetsMany(IEnumerable<string> keys)
+        {
+            return new PluralRetrievalObservable(_pool, () => new PluralGetsCommand
+            {
+                Keys = keys
+            });
+        }
+
+        /// <summary>
         /// Stores the specified <paramref name="value"/> in Memcached with the given <paramref name="key"/>.
         /// </summary>
         /// <param name="key">The key of the item to set. Must be between 1 and 250 characters and may not contain whitespace or control characters.</param>

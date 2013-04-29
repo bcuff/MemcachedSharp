@@ -89,6 +89,10 @@
     <Compile Include="Commands\GetsCommand.cs" />
     <Compile Include="Commands\ICommand.cs" />
     <Compile Include="Commands\IncrementCommand.cs" />
+    <Compile Include="Commands\PluralGetCommand.cs" />
+    <Compile Include="Commands\PluralGetsCommand.cs" />
+    <Compile Include="Commands\PluralRetrievalCommand.cs" />
+    <Compile Include="Commands\PluralRetrievalObservable.cs" />
     <Compile Include="Commands\PrependCommand.cs" />
     <Compile Include="Commands\ReplaceCommand.cs" />
     <Compile Include="Commands\RetrievalCommand.cs" />
