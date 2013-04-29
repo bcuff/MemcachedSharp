@@ -25,24 +25,19 @@ namespace MemcachedSharp
             _buffer = new byte[4 << 10];
         }
 
-        private async Task<bool> EnsureBuffer(bool throwOnEndOfStream)
+        private async Task FillBuffer()
         {
-            if (_pos == _length)
+            _length = await Task<int>.Factory.FromAsync(
+                (ac, state) => _stream.BeginRead(_buffer, 0, _buffer.Length, ac, state),
+                _stream.EndRead,
+                null,
+                TaskCreationOptions.None)
+                .TimeoutAfter(_receiveTimeout);
+            if (_length == 0)
             {
-                _length = await Task<int>.Factory.FromAsync(
-                    (ac, state) => _stream.BeginRead(_buffer, 0, _buffer.Length, ac, state),
-                    _stream.EndRead,
-                    null,
-                    TaskCreationOptions.None)
-                    .TimeoutAfter(_receiveTimeout);
-                if (_length == 0)
-                {
-                    if (throwOnEndOfStream) throw new MemcachedException("Unexpected end of stream");
-                    return false;
-                }
-                _pos = 0;
+                throw new MemcachedException("Unexpected end of stream");
             }
-            return true;
+            _pos = 0;
         }
 
         public async Task<ResponseLine> ReadLine(bool validate = true)
@@ -50,7 +45,7 @@ namespace MemcachedSharp
             var ms = new MemoryStream();
             while (true)
             {
-                if (_pos == _length) await EnsureBuffer(true);
+                if (_pos == _length) await FillBuffer();
                 for (; _pos < _length; ++_pos)
                 {
                     if (_buffer[_pos] == '\r') continue;
@@ -92,8 +87,9 @@ namespace MemcachedSharp
 
             // read the body of the item
             var body = new MemoryStream(bytes);
-            while (bytes > 0 && (_pos < _length || await EnsureBuffer(true)))
+            while (bytes > 0)
             {
+                if (_pos == _length) await FillBuffer();
                 var count = Math.Min(bytes, _length - _pos);
                 body.Write(_buffer, _pos, count);
                 _pos += count;
@@ -102,8 +98,9 @@ namespace MemcachedSharp
             body.Position = 0;
 
             // read the endline
-            while (_pos < _length || await EnsureBuffer(true))
+            while (true)
             {
+                if (_pos == _length) await FillBuffer();
                 if (_buffer[_pos] == '\r') { ++_pos; continue; }
                 if (_buffer[_pos] == '\n') { ++_pos; break; }
                 throw new MemcachedException("Unexpected character encountered - (byte)" + _buffer[_pos]);
