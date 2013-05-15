@@ -40,6 +40,7 @@ The maximum number of connections that may be opened at one time to the target h
 
 ####MaxConcurrentRequestPerConnection
 The maximum number of requests that may be sent at one time on the same connection.
+* Default: 15
 * Only applicable if EnablePipelining is true.
 
 #Example
