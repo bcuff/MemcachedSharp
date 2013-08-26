@@ -22,13 +22,13 @@ var client = new MemcachedClient("somehost:11211", new MemcachedOptions
 ####ConnectTimeout
 The amount of time to wait before abandoning an attempt to connect to a Memcached host.
 * Default: 2 seconds, ```TimeSpan.FromSeconds(2)```.
-* Infinite timeout: -1 millisecond, ```TimeSpan.FromMilliseconds(-1)```.
+* Infinite timeout: -1 millisecond, ```Timeout.InfiniteTimeSpan``` or ```TimeSpan.FromMilliseconds(-1)```.
 
 ####ReceiveTimeout
 The amount of time to wait before abandoning an attempt to receive more data from a Memcached host.
 Please note that requests may take longer than the specified receive timeout. This timeout only limits the amount of time that a connection may remain idle when data is expected.
 * Default: 2 seconds, ```TimeSpan.FromSeconds(2)```.
-* Infinite timeout: -1 millisecond, ```TimeSpan.FromMilliseconds(-1)```.
+* Infinite timeout: -1 millisecond, ```Timeout.InfiniteTimeSpan``` or ```TimeSpan.FromMilliseconds(-1)```.
 
 ####EnablePipelining
 Enables the client to send multiple requests on the same connection before receiving any of the responses. This works a lot like [http pipelining](http://en.wikipedia.org/wiki/HTTP_pipelining).
