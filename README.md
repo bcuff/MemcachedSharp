@@ -74,3 +74,9 @@ using(var client = new MemcachedClient("localhost:11211"))
 	Console.WriteLine(foo == null ? "not found." : "found.");
 }
 ```
+
+#The MemcachedClient class
+
+* Instances are stateful. Connections are created the first time they are needed and persist as long as the MemcachedClient instance exists.
+* Instances should be disposed when they are no longer needed. Doing so will close pooled connections to Memcached.
+* For long-lived applications with periodic requests to Memcached I recommend keeping a single instance alive for the life-time of the application.
