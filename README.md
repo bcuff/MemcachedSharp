@@ -75,8 +75,61 @@ using(var client = new MemcachedClient("localhost:11211"))
 }
 ```
 
-#The MemcachedClient class
+#MemcachedClient
 
 * Instances are stateful. Connections are created the first time they are needed and persist as long as the MemcachedClient instance exists.
 * Instances should be disposed when they are no longer needed. Doing so will close pooled connections to Memcached.
 * For long-lived applications with periodic requests to Memcached I recommend keeping a single instance alive for the life-time of the application.
+
+###Operations
+```c#
+public class MemcachedClient : IDisposable
+{
+    Task<MemcachedItem> Get(string key);
+    Task<MemcachedItem> Gets(string key);
+    Task Set(string key, byte[] value, MemcachedStorageOptions options = null);
+    Task<bool> Delete(string key);
+    Task<bool> Add(string key, byte[] value, MemcachedStorageOptions options = null);
+    Task<bool> Replace(string key, byte[] value, MemcachedStorageOptions options = null);
+    Task<bool> Append(string key, byte[] value, MemcachedStorageOptions options = null);
+    Task<bool> Prepend(string key, byte[] value, MemcachedStorageOptions options = null);
+    Task<ulong?> Increment(string key, ulong value);
+    Task<ulong?> Decrement(string key, ulong value);
+    Task<CasResult> Cas(string key, long casUnique, byte[] value, MemcachedStorageOptions options = null);
+}
+```
+
+###MemcachedItem
+```c#
+// Encapsulates a response object from Memcached.
+public class MemcachedItem
+{
+    // The key of the object retrieved from Memcached;
+    public string Key { get; }
+    
+    // The flags value of the object retrieved from Memcached.
+    public uint Flags { get; }
+
+    // The size of the object retrieved from Memcached.
+    public long Size { get; }
+
+    // The cas unique field of the object retrieved from Memcached.
+    public long? CasUnique { get; }
+
+    // A Stream of the data retrieved from Memcached.
+    public Stream Data { get; }
+}
+```
+
+###MemcachedStorageOptions
+```c#
+// Encapsulates options for storage operations in Memcached.
+public class MemcachedStorageOptions
+{
+    // The flags field on the object to store in Memcached.
+    public uint Flags { get; set; }
+
+    // The expires field on the object to store in Memcached.
+    public TimeSpan? ExpirationTime { get; set; }
+}
+```
