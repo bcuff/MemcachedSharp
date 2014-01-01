@@ -41,7 +41,7 @@ namespace MemcachedSharp
         public MemcachedClient(string endpoint, MemcachedOptions options = null)
         {
             if (endpoint == null) throw new ArgumentNullException("endpoint");
-            var parts = endpoint.Split(new[] {':'}, StringSplitOptions.None);
+            var parts = endpoint.Split(new[] { ':' }, StringSplitOptions.None);
             if (parts.Length == 0 || parts.Length > 2)
                 throw new ArgumentException("Invalid endpoint parameter", "endpoint");
             if (parts.Length == 2)
@@ -263,7 +263,7 @@ namespace MemcachedSharp
             return ExecuteStoreCommand<PrependCommand, bool>(key, buffer, offset, count, options);
         }
 
-        private Task<TResult> ExecuteStoreCommand<TCommand, TResult>(string key, byte[] buffer, int offset, int count, MemcachedStorageOptions options)
+        private Task<TResult> ExecuteStoreCommand<TCommand, TResult>(string key, byte[] buffer, int offset, int count, MemcachedStorageOptions options, long? casUnique = null)
             where TCommand : StorageCommand<TResult>, new()
         {
             return Execute(new TCommand
@@ -271,6 +271,7 @@ namespace MemcachedSharp
                 Key = key,
                 Data = new ArraySegment<byte>(buffer, offset, count),
                 Options = options,
+                CasUnique = casUnique
             });
         }
 
@@ -312,7 +313,7 @@ namespace MemcachedSharp
         {
             Util.ValidateKey(key);
             if (value == null) throw new ArgumentNullException("value");
-            return ExecuteStoreCommand<CasCommand, CasResult>(key, value, 0, value.Length, options);
+            return ExecuteStoreCommand<CasCommand, CasResult>(key, value, 0, value.Length, options, casUnique);
         }
 
         /// <summary>
@@ -331,7 +332,7 @@ namespace MemcachedSharp
         {
             Util.ValidateKey(key);
             Util.ValidateBuffer(buffer, offset, count);
-            return ExecuteStoreCommand<CasCommand, CasResult>(key, buffer, offset, count, options);
+            return ExecuteStoreCommand<CasCommand, CasResult>(key, buffer, offset, count, options, casUnique);
         }
 
         /// <summary>

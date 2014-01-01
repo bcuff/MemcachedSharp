@@ -11,6 +11,7 @@ namespace MemcachedSharp.Commands
 
         public MemcachedStorageOptions Options { get; set; }
         public ArraySegment<byte> Data { get; set; }
+        public long? CasUnique { get; set; }
 
         public sealed override Task SendRequest(ISocket socket)
         {
@@ -24,7 +25,10 @@ namespace MemcachedSharp.Commands
                     expires = (uint)Options.ExpirationTime.Value.TotalSeconds;
                 }
             }
-            var line = string.Format("{0} {1} {2} {3} {4}\r\n", Verb, Key, flags, expires, Data.Count);
+            var line = CasUnique != null ? 
+                string.Format("{0} {1} {2} {3} {4} {5}\r\n", Verb, Key, flags, expires, Data.Count, CasUnique.Value) : 
+                string.Format("{0} {1} {2} {3} {4}\r\n", Verb, Key, flags, expires, Data.Count);
+            
             return socket.SendAsync(new[]
             {
                 new ArraySegment<byte>(line.ToUtf8()),
