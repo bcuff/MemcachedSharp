@@ -32,6 +32,6 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("1.1.0.0")]
+[assembly: AssemblyFileVersion("1.1.0.0")]
 [assembly: InternalsVisibleTo("MemcachedSharp.Test,PublicKey=00240000048000009400000006020000002400005253413100040000010001005ffaab419962cdd57e8756b1672d9d4b9494e088b54ede25ea1e90238ca40eab5cb0ba836e9f813bb2046848405710b058911b2bb2e52213629d33eba70519e2f21faeb27ba8a7f83792520cb2f64cb4d2fbd9dca286e1a9ae333fc17fec177f385f6fcb04faa30e635194fc5e9acc6056b8d7e0ab3675aa351d7acccab6b6b5")]
