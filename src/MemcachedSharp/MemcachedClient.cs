@@ -17,6 +17,7 @@ namespace MemcachedSharp
     /// </remarks>
     public sealed class MemcachedClient : IDisposable
     {
+        readonly string _poolinghost;
         readonly int _port;
         readonly string _host;
         readonly TimeSpan _connectTimeout;
@@ -85,6 +86,56 @@ namespace MemcachedSharp
                     MaxCount = options.MaxConnections,
                 });
             }
+
+            _poolinghost = _host + ":" + _port;
+        }
+
+        /// <summary>
+        /// Returns the unique host and port combination for this client in the form
+        /// Host : Port
+        /// Eg. 127.0.0.1:11211
+        /// </summary>
+        public string PoolingHost
+        {
+            get { return _poolinghost; }
+        }
+
+        /// <summary>
+        /// Returns the number of connections in the pool
+        /// </summary>
+        public int PoolSize
+        {
+            get { return _pool.Size; }
+        }
+
+        /// <summary>
+        /// Ensure sthe pool contains at least 1 socket
+        /// Used to check for connection errors against the current host
+        /// </summary>
+        /// <returns>True if a socket can be acquired, otherwise false</returns>
+        public async Task<bool> TryCreateConnection()
+        {
+            try
+            {
+                using (var conn = await _pool.Borrow())
+                {
+                    return true;
+                }
+            }
+            catch
+            {
+                // Log?
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Clears the underlying pool of all its connections
+        /// </summary>
+        public void Clear()
+        {
+            _pool.Clear();
         }
 
         /// <summary>

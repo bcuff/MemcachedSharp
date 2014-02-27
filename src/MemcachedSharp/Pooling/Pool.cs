@@ -28,6 +28,11 @@ namespace MemcachedSharp
             }
         }
 
+        public int Size
+        {
+            get { return _items.Count; }
+        }
+
         public async Task<IPooledItem<T>> Borrow()
         {
             if (_disposed) throw new ObjectDisposedException(GetType().Name);
@@ -55,11 +60,20 @@ namespace MemcachedSharp
             }
         }
 
+        public void Clear()
+        {
+            Clear(false);
+        }
+
         public void Dispose()
+        {
+            Clear(true);
+        }
+
+        private void Clear(bool disposing)
         {
             lock (_items)
             {
-                _disposed = true;
                 List<Exception> exceptions = null;
                 while (_items.Count > 0)
                 {
@@ -78,6 +92,10 @@ namespace MemcachedSharp
                         }
                     }
                 }
+
+                if (disposing)
+                    _disposed = true;
+
                 if (exceptions != null)
                 {
                     throw new AggregateException(exceptions);

@@ -34,6 +34,11 @@ namespace MemcachedSharp
             _waiters = new LinkedList<TaskCompletionSource<ResidentItem>>();
         }
 
+        public int Size
+        {
+            get { return _items.Count; }
+        }
+
         private ResidentItem TryGetItem()
         {
             ResidentItem result = null;
@@ -99,7 +104,17 @@ namespace MemcachedSharp
             return new LoanerItem(result);
         }
 
+        public void Clear()
+        {
+            Clear(false);
+        }
+
         public void Dispose()
+        {
+            Clear(true);
+        }
+
+        private void Clear(bool disposing)
         {
             ResidentItem[] itemsToDispose;
             ObjectDisposedException waiterException = null;
@@ -114,11 +129,13 @@ namespace MemcachedSharp
                 _items.Clear();
                 while (_waiters.First != null)
                 {
-                    if(waiterException == null) waiterException = new ObjectDisposedException(GetType().Name);
+                    if (waiterException == null) waiterException = new ObjectDisposedException(GetType().Name);
                     _waiters.First.Value.SetException(waiterException);
                     _waiters.RemoveFirst();
                 }
-                _disposed = true;
+
+                if( disposing )
+                    _disposed = true;
             }
             var exceptions = new List<Exception>();
             foreach (var item in itemsToDispose)
