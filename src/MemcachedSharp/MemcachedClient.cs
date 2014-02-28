@@ -171,7 +171,7 @@ namespace MemcachedSharp
         /// <param name="value">A <c>byte</c>[] containing the data to be stored in Memcached.</param>
         /// <param name="options">Optional options to pass to Memcached.</param>
         /// <returns>A task that completes when the operation finishes successfully or faults in the event of a failure.</returns>
-        public Task Set(string key, byte[] value, MemcachedStorageOptions options = null)
+        public Task<bool> Set(string key, byte[] value, MemcachedStorageOptions options = null)
         {
             Util.ValidateKey(key);
             if (value == null) throw new ArgumentNullException("value");
@@ -187,7 +187,7 @@ namespace MemcachedSharp
         /// <param name="count">The number of bytes in <paramref name="buffer"/> to store.</param>
         /// <param name="options">Optional options to pass to Memcached.</param>
         /// <returns>A task that completes when the operation finishes successfully or faults in the event of a failure.</returns>
-        public Task Set(string key, byte[] buffer, int offset, int count, MemcachedStorageOptions options = null)
+        public Task<bool> Set(string key, byte[] buffer, int offset, int count, MemcachedStorageOptions options = null)
         {
             Util.ValidateKey(key);
             Util.ValidateBuffer(buffer, offset, count);
