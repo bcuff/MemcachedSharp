@@ -1,0 +1,29 @@
+﻿{
+  "version": "1.2.0-*",
+  "configurations": {
+    "Debug": {
+      "buildOptions": {
+        "define": [ "DEBUG" ]
+      }
+    },
+    "Release": {
+      "buildOptions": {
+        "keyFile": "key.snk"
+      }
+    }
+  },
+  "frameworks": {
+    "netstandard1.6": {
+      "imports": "dnxcore50",
+      "dependencies": {
+        "NETStandard.Library": "1.6.0",
+        "System.Net.NameResolution": "4.3.0"
+      }
+    },
+    "net45": {
+      "buildOptions": {
+        "define": [ "NET45" ]
+      }
+    }
+  }
+}

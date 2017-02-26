@@ -18,7 +18,11 @@ namespace MemcachedSharp
 
         public Task SendAsync(byte[] buffer, int offset, int count, SocketFlags flags = SocketFlags.None)
         {
+#if NET45
             return _socket.SendAsync(buffer, offset, count, flags);
+#else
+            return _socket.SendAsync(new ArraySegment<byte>(buffer, offset, count), flags);
+#endif
         }
 
         public Task SendAsync(IList<ArraySegment<byte>> buffers, SocketFlags flags = SocketFlags.None)

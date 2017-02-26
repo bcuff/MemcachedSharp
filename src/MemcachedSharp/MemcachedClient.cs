@@ -366,7 +366,11 @@ namespace MemcachedSharp
             IPAddress address = _ip;
             if (address == null)
             {
+#if NET45
                 var addresses = await DnsExtensions.GetHostAddressesAsync(_host);
+#else
+                var addresses = await Dns.GetHostAddressesAsync(_host);
+#endif
                 address = addresses.First();
             }
             var endpoint = new IPEndPoint(address, _port);

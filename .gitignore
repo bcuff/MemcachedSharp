@@ -109,3 +109,7 @@ UpgradeLog*.XML
 
 # Vim temp files
 *~
+
+# dotnet core files
+*.lock.json
+.vs/

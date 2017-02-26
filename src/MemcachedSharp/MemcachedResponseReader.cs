@@ -27,12 +27,8 @@ namespace MemcachedSharp
 
         private async Task FillBuffer()
         {
-            _length = await Task<int>.Factory.FromAsync(
-                (ac, state) => _stream.BeginRead(_buffer, 0, _buffer.Length, ac, state),
-                _stream.EndRead,
-                null,
-                TaskCreationOptions.None)
-                .TimeoutAfter(_receiveTimeout);
+            _length = await _stream.ReadAsync(_buffer, 0, _buffer.Length);
+            // todo - timeout
             if (_length == 0)
             {
                 throw new MemcachedException("Unexpected end of stream");

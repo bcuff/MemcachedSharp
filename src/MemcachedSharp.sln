@@ -1,48 +1,28 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemcachedSharp", "MemcachedSharp\MemcachedSharp.csproj", "{761D5804-02C8-466C-978B-8209EA7BC788}"
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "MemcachedSharp", "MemcachedSharp\MemcachedSharp.xproj", "{06546966-7ECF-40DB-BB4B-280BF55E325B}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{3C0B6389-A808-4651-87E6-AF4CB8C3FE5D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemcachedSharp.Test", "MemcachedSharp.Test\MemcachedSharp.Test.csproj", "{10398387-BA80-4BA3-8AB5-5DC6F39821B1}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{64B78E48-5418-4083-900B-A112D0479982}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\NuGet.Config = .nuget\NuGet.Config
-		.nuget\NuGet.exe = .nuget\NuGet.exe
-		.nuget\NuGet.targets = .nuget\NuGet.targets
-	EndProjectSection
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "MemcachedSharp.Test", "MemcachedSharp.Test\MemcachedSharp.Test.xproj", "{071AE29B-ABE1-4F35-9FA0-0F6A978CFF63}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug.net40|Any CPU = Debug.net40|Any CPU
 		Debug|Any CPU = Debug|Any CPU
-		Release.net40|Any CPU = Release.net40|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{761D5804-02C8-466C-978B-8209EA7BC788}.Debug.net40|Any CPU.ActiveCfg = Debug.net40|Any CPU
-		{761D5804-02C8-466C-978B-8209EA7BC788}.Debug.net40|Any CPU.Build.0 = Debug.net40|Any CPU
-		{761D5804-02C8-466C-978B-8209EA7BC788}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{761D5804-02C8-466C-978B-8209EA7BC788}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{761D5804-02C8-466C-978B-8209EA7BC788}.Release.net40|Any CPU.ActiveCfg = Release.net40|Any CPU
-		{761D5804-02C8-466C-978B-8209EA7BC788}.Release.net40|Any CPU.Build.0 = Release.net40|Any CPU
-		{761D5804-02C8-466C-978B-8209EA7BC788}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{761D5804-02C8-466C-978B-8209EA7BC788}.Release|Any CPU.Build.0 = Release|Any CPU
-		{10398387-BA80-4BA3-8AB5-5DC6F39821B1}.Debug.net40|Any CPU.ActiveCfg = Debug.net40|Any CPU
-		{10398387-BA80-4BA3-8AB5-5DC6F39821B1}.Debug.net40|Any CPU.Build.0 = Debug.net40|Any CPU
-		{10398387-BA80-4BA3-8AB5-5DC6F39821B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{10398387-BA80-4BA3-8AB5-5DC6F39821B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{10398387-BA80-4BA3-8AB5-5DC6F39821B1}.Release.net40|Any CPU.ActiveCfg = Release.net40|Any CPU
-		{10398387-BA80-4BA3-8AB5-5DC6F39821B1}.Release.net40|Any CPU.Build.0 = Release.net40|Any CPU
-		{10398387-BA80-4BA3-8AB5-5DC6F39821B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{10398387-BA80-4BA3-8AB5-5DC6F39821B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{06546966-7ECF-40DB-BB4B-280BF55E325B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06546966-7ECF-40DB-BB4B-280BF55E325B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06546966-7ECF-40DB-BB4B-280BF55E325B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06546966-7ECF-40DB-BB4B-280BF55E325B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{071AE29B-ABE1-4F35-9FA0-0F6A978CFF63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{071AE29B-ABE1-4F35-9FA0-0F6A978CFF63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{071AE29B-ABE1-4F35-9FA0-0F6A978CFF63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{071AE29B-ABE1-4F35-9FA0-0F6A978CFF63}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{10398387-BA80-4BA3-8AB5-5DC6F39821B1} = {3C0B6389-A808-4651-87E6-AF4CB8C3FE5D}
 	EndGlobalSection
 EndGlobal
